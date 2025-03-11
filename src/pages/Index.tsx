@@ -1,8 +1,10 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import Layout from "@/components/layout/Layout";
+import { Link } from "react-router-dom";
 
-// Note: Eventually these components will be imported when they're created
+// Hero component
 const Hero = () => (
   <div className="relative bg-gradient-to-b from-charity-blue to-charity-blue-light py-20 px-4 sm:px-6 lg:px-8 text-white">
     <div className="max-w-7xl mx-auto">
@@ -18,12 +20,12 @@ const Hero = () => (
         <div className="mt-8 sm:mt-10">
           <div className="rounded-md shadow">
             <Button className="w-full flex items-center justify-center px-8 py-3 text-base font-medium rounded-md text-white bg-charity-coral hover:bg-charity-coral-light md:py-4 md:text-lg md:px-10">
-              Donate Now
+              <Link to="/donate">Donate Now</Link>
             </Button>
           </div>
           <div className="mt-3">
             <Button variant="outline" className="w-full flex items-center justify-center px-8 py-3 text-base font-medium rounded-md text-charity-blue bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
-              Start a Campaign
+              <Link to="/campaigns">Start a Campaign</Link>
             </Button>
           </div>
         </div>
@@ -32,6 +34,7 @@ const Hero = () => (
   </div>
 );
 
+// Featured Campaign component
 const FeaturedCampaign = ({ title, description, raised, goal, image }: { 
   title: string; 
   description: string; 
@@ -70,13 +73,14 @@ const FeaturedCampaign = ({ title, description, raised, goal, image }: {
           <span className="text-gray-500">of ${goal.toLocaleString()}</span>
         </div>
         <Button className="w-full mt-4 bg-charity-blue hover:bg-charity-blue-light text-white">
-          Donate
+          <Link to="/donate">Donate</Link>
         </Button>
       </div>
     </div>
   );
 };
 
+// Featured Campaigns section
 const FeaturedCampaigns = () => {
   const campaigns = [
     {
@@ -130,7 +134,7 @@ const FeaturedCampaigns = () => {
         </div>
         <div className="mt-10 text-center">
           <Button variant="outline" className="px-6 py-3 text-charity-blue border-charity-blue hover:bg-charity-blue hover:text-white">
-            View All Campaigns
+            <Link to="/campaigns">View All Campaigns</Link>
           </Button>
         </div>
       </div>
@@ -138,6 +142,7 @@ const FeaturedCampaigns = () => {
   );
 };
 
+// Mission section
 const MissionSection = () => (
   <div className="py-16 bg-white">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -191,6 +196,7 @@ const MissionSection = () => (
   </div>
 );
 
+// Call to Action section
 const CallToAction = () => (
   <div className="bg-charity-coral-light">
     <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
@@ -201,12 +207,12 @@ const CallToAction = () => (
       <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
         <div className="inline-flex rounded-md shadow">
           <Button className="px-6 py-3 text-base font-medium rounded-md text-charity-coral bg-white hover:bg-gray-50">
-            Start a Campaign
+            <Link to="/campaigns">Start a Campaign</Link>
           </Button>
         </div>
         <div className="ml-3 inline-flex rounded-md shadow">
           <Button variant="secondary" className="px-6 py-3 text-base font-medium rounded-md text-white bg-charity-coral border border-white hover:bg-charity-coral-light">
-            Volunteer With Us
+            <Link to="/contact">Volunteer With Us</Link>
           </Button>
         </div>
       </div>
@@ -214,14 +220,15 @@ const CallToAction = () => (
   </div>
 );
 
+// Main Index component
 const Index = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <Layout>
       <Hero />
       <FeaturedCampaigns />
       <MissionSection />
       <CallToAction />
-    </div>
+    </Layout>
   );
 };
 
