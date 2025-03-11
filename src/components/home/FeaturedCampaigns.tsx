@@ -1,131 +1,111 @@
 
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import CampaignCard from '../campaigns/CampaignCard';
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
-// Define campaign interface
-interface Campaign {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  goalAmount: number;
-  raisedAmount: number;
-  daysLeft: number;
-  imageUrl: string;
-  organizer: {
-    name: string;
-    avatar: string;
-  };
-}
+// Featured Campaign component
+const FeaturedCampaign = ({ title, description, raised, goal, image }: { 
+  title: string; 
+  description: string; 
+  raised: number; 
+  goal: number; 
+  image: string;
+}) => {
+  const progress = Math.min(Math.round((raised / goal) * 100), 100);
+  
+  return (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
+      <div className="h-48 bg-gray-200 relative">
+        <div className="absolute inset-0 bg-gray-300 animate-pulse-subtle"></div>
+        <img 
+          src={image} 
+          alt={title} 
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/placeholder.svg';
+          }}
+        />
+      </div>
+      <div className="p-6">
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
+        <p className="text-gray-600 mb-4 line-clamp-2">{description}</p>
+        <div className="mb-2">
+          <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div 
+              className="bg-charity-blue h-2.5 rounded-full" 
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        </div>
+        <div className="flex justify-between text-sm font-medium">
+          <span className="text-charity-blue">${raised.toLocaleString()} raised</span>
+          <span className="text-gray-500">of ${goal.toLocaleString()}</span>
+        </div>
+        <Button className="w-full mt-4 bg-charity-blue hover:bg-charity-blue-light text-white">
+          <Link to="/donate">Donate</Link>
+        </Button>
+      </div>
+    </div>
+  );
+};
 
-// Mock data for featured campaigns
-const mockCampaigns: Campaign[] = [
-  {
-    id: '1',
-    title: 'Clean Water for Rural Communities',
-    description: 'Help us provide clean water solutions to villages facing severe water shortages.',
-    category: 'Water & Sanitation',
-    goalAmount: 50000,
-    raisedAmount: 34250,
-    daysLeft: 15,
-    imageUrl: 'https://images.unsplash.com/photo-1541252260730-0412e8e2108e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80',
-    organizer: {
-      name: 'Water Aid Foundation',
-      avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
+const FeaturedCampaigns = () => {
+  const campaigns = [
+    {
+      id: 1,
+      title: "Education for Rural Children",
+      description: "Help provide educational resources to underprivileged children in rural communities.",
+      raised: 3500,
+      goal: 10000,
+      image: "/placeholder.svg"
     },
-  },
-  {
-    id: '2',
-    title: 'Education for Underprivileged Children',
-    description: 'Support education initiatives for children from low-income families to break the cycle of poverty.',
-    category: 'Education',
-    goalAmount: 75000,
-    raisedAmount: 45000,
-    daysLeft: 30,
-    imageUrl: 'https://images.unsplash.com/photo-1594608661623-aa0bd3a69799?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1548&q=80',
-    organizer: {
-      name: 'Education First',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    {
+      id: 2,
+      title: "Clean Water Initiative",
+      description: "Support our mission to bring clean drinking water to communities in need.",
+      raised: 7500,
+      goal: 15000,
+      image: "/placeholder.svg"
     },
-  },
-  {
-    id: '3',
-    title: 'Wildlife Conservation Efforts',
-    description: 'Join our mission to protect endangered species and their habitats from human encroachment.',
-    category: 'Environment',
-    goalAmount: 100000,
-    raisedAmount: 68000,
-    daysLeft: 45,
-    imageUrl: 'https://images.unsplash.com/photo-1574722772249-e21eeef4f1bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80',
-    organizer: {
-      name: 'Wildlife Trust',
-      avatar: 'https://randomuser.me/api/portraits/women/45.jpg',
-    },
-  },
-];
-
-const FeaturedCampaigns: React.FC = () => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Simulate loading campaigns
-  useEffect(() => {
-    const fetchCampaigns = async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setCampaigns(mockCampaigns);
-      setIsLoading(false);
-    };
-
-    fetchCampaigns();
-  }, []);
+    {
+      id: 3,
+      title: "Medical Aid for Families",
+      description: "Provide essential medical supplies and care to families without access to healthcare.",
+      raised: 2000,
+      goal: 5000,
+      image: "/placeholder.svg"
+    }
+  ];
 
   return (
-    <section className="section-container">
-      <div className="flex justify-between items-end mb-12">
-        <div>
-          <h2 className="heading-lg text-gray-900 mb-3">Featured Campaigns</h2>
-          <p className="text-gray-600 max-w-2xl">
-            Discover active campaigns that need your support to make a real difference in the world.
+    <div className="py-16 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            Featured Campaigns
+          </h2>
+          <p className="mt-3 max-w-2xl mx-auto text-xl text-gray-500 sm:mt-4">
+            Join these important causes and help make a difference
           </p>
         </div>
-        <Link 
-          to="/campaigns" 
-          className="hidden md:flex items-center text-charity-blue hover:text-charity-blue/80 transition-colors"
-        >
-          <span className="mr-2">View all campaigns</span>
-          <ArrowRight size={18} />
-        </Link>
-      </div>
-
-      {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-[28rem] rounded-lg bg-gray-100 shimmer"></div>
+        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {campaigns.map(campaign => (
+            <FeaturedCampaign 
+              key={campaign.id}
+              title={campaign.title}
+              description={campaign.description}
+              raised={campaign.raised}
+              goal={campaign.goal}
+              image={campaign.image}
+            />
           ))}
         </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {campaigns.map((campaign) => (
-              <CampaignCard key={campaign.id} campaign={campaign} />
-            ))}
-          </div>
-          
-          <div className="mt-10 text-center md:hidden">
-            <Link 
-              to="/campaigns" 
-              className="btn-outline inline-flex items-center"
-            >
-              <span>View all campaigns</span>
-              <ArrowRight size={18} className="ml-2" />
-            </Link>
-          </div>
-        </>
-      )}
-    </section>
+        <div className="mt-10 text-center">
+          <Button variant="outline" className="px-6 py-3 text-charity-blue border-charity-blue hover:bg-charity-blue hover:text-white">
+            <Link to="/campaigns">View All Campaigns</Link>
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
 
