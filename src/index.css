@@ -1,6 +1,31 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-medium-webfont.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SF Pro Display';
+  src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 @layer base {
   :root {
@@ -13,7 +38,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 217 91% 60%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -22,32 +47,25 @@
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 91% 71%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 217 91% 60%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -70,8 +88,8 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 0 91% 71%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -96,6 +114,79 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-md bg-white/80 shadow-md rounded-lg border border-gray-100;
+  }
+  
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16;
+  }
+  
+  .btn-primary {
+    @apply bg-charity-blue text-white px-6 py-3 rounded-lg font-medium shadow-md
+           hover:bg-charity-blue/90 focus:ring-2 focus:ring-charity-blue/50 focus:outline-none
+           transition-all duration-300 ease-in-out;
+  }
+  
+  .btn-secondary {
+    @apply bg-charity-coral text-white px-6 py-3 rounded-lg font-medium shadow-md
+           hover:bg-charity-coral/90 focus:ring-2 focus:ring-charity-coral/50 focus:outline-none
+           transition-all duration-300 ease-in-out;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-charity-blue text-charity-blue px-6 py-3 rounded-lg font-medium
+           hover:bg-charity-blue/10 focus:ring-2 focus:ring-charity-blue/50 focus:outline-none
+           transition-all duration-300 ease-in-out;
+  }
+  
+  .heading-xl {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  }
+  
+  .heading-lg {
+    @apply text-3xl md:text-4xl font-bold tracking-tight;
+  }
+  
+  .heading-md {
+    @apply text-2xl md:text-3xl font-bold;
+  }
+  
+  .heading-sm {
+    @apply text-lg md:text-xl font-semibold;
+  }
+  
+  .page-transition {
+    @apply animate-fade-in;
+  }
+  
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+  
+  .shimmer:after {
+    @apply absolute inset-0;
+    content: "";
+    animation: shimmer 1.5s infinite;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+  
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
   }
 }
