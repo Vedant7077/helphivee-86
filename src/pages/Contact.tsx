@@ -10,6 +10,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useToast } from "@/hooks/use-toast";
 import Layout from "@/components/layout/Layout";
 import { Mail, MapPin, Phone } from "lucide-react";
+import emailjs from 'emailjs-com';
+
+// EmailJS configuration
+const EMAILJS_SERVICE_ID = "service_id"; // You'll need to replace with your actual service ID
+const EMAILJS_TEMPLATE_ID = "template_id"; // You'll need to replace with your actual template ID
+const EMAILJS_USER_ID = "user_id"; // You'll need to replace with your actual user ID
+const RECIPIENT_EMAIL = "vedantpalekar21@gmail.com";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -38,11 +45,24 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // This would be replaced with actual form submission logic
-      console.log("Contact form data:", data);
+      // Prepare the template parameters
+      const templateParams = {
+        from_name: data.name,
+        from_email: data.email,
+        subject: data.subject,
+        message: data.message,
+        to_email: RECIPIENT_EMAIL
+      };
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      console.log("Sending email with data:", templateParams);
+      
+      // Send the email using EmailJS
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_USER_ID
+      );
       
       toast({
         title: "Message sent!",
@@ -51,9 +71,10 @@ const Contact = () => {
       
       form.reset();
     } catch (error) {
+      console.error("Error sending email:", error);
       toast({
         title: "Something went wrong.",
-        description: "Please try again later.",
+        description: "Please try again later or contact us directly at vedantpalekar21@gmail.com",
         variant: "destructive",
       });
     } finally {
