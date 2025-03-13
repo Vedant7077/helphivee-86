@@ -2,11 +2,21 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, signOut } = useAuth();
   
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -60,16 +70,59 @@ const Navbar = () => {
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login">
-              <Button variant="outline" className="border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
-                Login
-              </Button>
-            </Link>
-            <Link to="/donate">
-              <Button className="bg-charity-green hover:bg-charity-green-dark text-white">
-                Donate Now
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link to="/create-campaign">
+                  <Button variant="outline" className="border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
+                    Start a Campaign
+                  </Button>
+                </Link>
+                <Link to="/donate">
+                  <Button className="bg-charity-green hover:bg-charity-green-dark text-white">
+                    Donate Now
+                  </Button>
+                </Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
+                      <User className="h-5 w-5 text-charity-green-dark" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Link to="/profile" className="w-full">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link to="/dashboard" className="w-full">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => signOut()}>
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Link to="/create-campaign">
+                  <Button variant="outline" className="border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
+                    Start a Campaign
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <Button variant="outline" className="border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/donate">
+                  <Button className="bg-charity-green hover:bg-charity-green-dark text-white">
+                    Donate Now
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
           <div className="flex items-center md:hidden">
             <button
@@ -119,16 +172,46 @@ const Navbar = () => {
               Contact
             </Link>
             <div className="mt-4 flex flex-col space-y-2 px-3">
-              <Link to="/login">
-                <Button variant="outline" className="w-full border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
-                  Login
-                </Button>
-              </Link>
-              <Link to="/donate">
-                <Button className="w-full bg-charity-green hover:bg-charity-green-dark text-white">
-                  Donate Now
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/create-campaign">
+                    <Button variant="outline" className="w-full border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
+                      Start a Campaign
+                    </Button>
+                  </Link>
+                  <Link to="/profile">
+                    <Button variant="outline" className="w-full border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
+                      My Profile
+                    </Button>
+                  </Link>
+                  <Link to="/donate">
+                    <Button className="w-full bg-charity-green hover:bg-charity-green-dark text-white">
+                      Donate Now
+                    </Button>
+                  </Link>
+                  <Button variant="ghost" className="w-full" onClick={() => signOut()}>
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/create-campaign">
+                    <Button variant="outline" className="w-full border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
+                      Start a Campaign
+                    </Button>
+                  </Link>
+                  <Link to="/login">
+                    <Button variant="outline" className="w-full border-charity-green text-charity-green-dark hover:bg-charity-green hover:text-white">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/donate">
+                    <Button className="w-full bg-charity-green hover:bg-charity-green-dark text-white">
+                      Donate Now
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

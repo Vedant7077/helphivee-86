@@ -15,12 +15,16 @@ const Hero = () => (
           education, healthcare, and community development.
         </p>
         <div className="mt-8 sm:mt-10 flex flex-wrap gap-4">
-          <Button className="w-auto px-8 py-2 text-base font-medium rounded-md text-charity-green-dark bg-charity-offwhite hover:bg-white md:py-3 md:text-lg">
-            <Link to="/donate" className="w-full h-full flex items-center justify-center">Donate Now</Link>
-          </Button>
-          <Button variant="outline" className="w-auto px-8 py-2 text-base font-medium rounded-md text-charity-offwhite bg-transparent border-charity-offwhite hover:bg-charity-green md:py-3 md:text-lg">
-            <Link to="/campaigns" className="w-full h-full flex items-center justify-center">Start a Campaign</Link>
-          </Button>
+          <Link to="/donate" className="w-auto">
+            <Button className="px-6 py-2 text-sm font-medium rounded-md text-charity-green-dark bg-charity-offwhite hover:bg-white md:py-2 md:text-base">
+              Donate Now
+            </Button>
+          </Link>
+          <Link to="/create-campaign" className="w-auto">
+            <Button variant="outline" className="px-6 py-2 text-sm font-medium rounded-md text-charity-offwhite bg-transparent border-charity-offwhite hover:bg-charity-green md:py-2 md:text-base">
+              Start a Campaign
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

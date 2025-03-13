@@ -6,7 +6,8 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const signupSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -22,7 +23,8 @@ interface SignupFormProps {
 
 const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
   
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -37,24 +39,11 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
     setIsLoading(true);
     
     try {
-      // This would be replaced with actual authentication logic
-      console.log('Sign up data:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: 'Account created!',
-        description: 'You have successfully signed up.',
-      });
-      
+      await signUp(data.email, data.password, data.name);
       onSuccess();
+      navigate('/profile');
     } catch (error) {
-      toast({
-        title: 'Something went wrong.',
-        description: 'Please try again later.',
-        variant: 'destructive',
-      });
+      console.error('Sign up error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +102,7 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
             )}
           />
           
-          <Button type="submit" className="w-full bg-charity-coral hover:bg-charity-coral-light" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-charity-green hover:bg-charity-green-dark" disabled={isLoading}>
             {isLoading ? 'Creating account...' : 'Sign up'}
           </Button>
         </form>

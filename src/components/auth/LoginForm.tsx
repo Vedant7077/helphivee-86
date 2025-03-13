@@ -6,7 +6,8 @@ import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -21,7 +22,8 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -35,24 +37,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setIsLoading(true);
     
     try {
-      // This would be replaced with actual authentication logic
-      console.log('Login data:', data);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: 'Login successful!',
-        description: 'Welcome back to Brighter Futures.',
-      });
-      
+      await signIn(data.email, data.password);
       onSuccess();
+      navigate('/profile');
     } catch (error) {
-      toast({
-        title: 'Something went wrong.',
-        description: 'Please check your credentials and try again.',
-        variant: 'destructive',
-      });
+      console.error('Login error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -98,12 +87,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           />
           
           <div className="flex items-center justify-end">
-            <a href="#" className="text-sm text-charity-blue hover:underline">
+            <a href="#" className="text-sm text-charity-green hover:underline">
               Forgot password?
             </a>
           </div>
           
-          <Button type="submit" className="w-full bg-charity-blue hover:bg-charity-blue-light" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-charity-green hover:bg-charity-green-dark" disabled={isLoading}>
             {isLoading ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
@@ -112,7 +101,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       <div className="text-center text-sm">
         <p className="text-muted-foreground">
           Don't have an account?{' '}
-          <a href="#" className="text-charity-blue hover:underline">
+          <a href="#" className="text-charity-green hover:underline">
             Sign up
           </a>
         </p>
