@@ -70,6 +70,10 @@ export default {
 					'coral-light': '#FECACA',
 					'gray': '#F3F4F6',
 					'gray-dark': '#4B5563',
+					'green': '#4ADE80',
+					'green-light': '#86EFAC',
+					'green-dark': '#16A34A',
+					'offwhite': '#F2FCE2',
 				}
 			},
 			borderRadius: {
@@ -101,6 +105,10 @@ export default {
 				'pulse-subtle': {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.8' }
+				},
+				'count-up': {
+					'0%': { content: '0' },
+					'100%': { content: 'attr(data-value)' }
 				}
 			},
 			animation: {
@@ -109,7 +117,8 @@ export default {
 				'fade-in': 'fade-in 0.5s ease-out',
 				'fade-up': 'fade-up 0.5s ease-out',
 				'slide-in-right': 'slide-in-right 0.3s ease-out',
-				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite'
+				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
+				'count-up': 'count-up 2s forwards'
 			},
 			backdropFilter: {
 				'none': 'none',

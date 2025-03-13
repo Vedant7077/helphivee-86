@@ -31,17 +31,17 @@ const FeaturedCampaign = ({ title, description, raised, goal, image }: {
         <div className="mb-2">
           <div className="w-full bg-gray-200 rounded-full h-2.5">
             <div 
-              className="bg-charity-blue h-2.5 rounded-full" 
+              className="bg-charity-green h-2.5 rounded-full" 
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         </div>
         <div className="flex justify-between text-sm font-medium">
-          <span className="text-charity-blue">${raised.toLocaleString()} raised</span>
+          <span className="text-charity-green-dark">${raised.toLocaleString()} raised</span>
           <span className="text-gray-500">of ${goal.toLocaleString()}</span>
         </div>
-        <Button className="w-full mt-4 bg-charity-blue hover:bg-charity-blue-light text-white">
-          <Link to="/donate">Donate</Link>
+        <Button className="w-full mt-4 bg-charity-green hover:bg-charity-green-dark text-white">
+          <Link to="/donate" className="w-full h-full flex items-center justify-center">Donate</Link>
         </Button>
       </div>
     </div>
@@ -56,7 +56,7 @@ const FeaturedCampaigns = () => {
       description: "Help provide educational resources to underprivileged children in rural communities.",
       raised: 3500,
       goal: 10000,
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1522661067900-ab829854a57f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZWR1Y2F0aW9ufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
     },
     {
       id: 2,
@@ -64,7 +64,7 @@ const FeaturedCampaigns = () => {
       description: "Support our mission to bring clean drinking water to communities in need.",
       raised: 7500,
       goal: 15000,
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2xlYW4lMjB3YXRlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
     },
     {
       id: 3,
@@ -72,12 +72,12 @@ const FeaturedCampaigns = () => {
       description: "Provide essential medical supplies and care to families without access to healthcare.",
       raised: 2000,
       goal: 5000,
-      image: "/placeholder.svg"
+      image: "https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fG1lZGljYWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
     }
   ];
 
   return (
-    <div className="py-16 bg-gray-50">
+    <div className="py-16 bg-charity-offwhite">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
@@ -100,8 +100,8 @@ const FeaturedCampaigns = () => {
           ))}
         </div>
         <div className="mt-10 text-center">
-          <Button variant="outline" className="px-6 py-3 text-charity-blue border-charity-blue hover:bg-charity-blue hover:text-white">
-            <Link to="/campaigns">View All Campaigns</Link>
+          <Button variant="outline" className="px-6 py-3 text-base font-medium rounded-md text-charity-green-dark border-charity-green hover:bg-charity-green hover:text-white">
+            <Link to="/campaigns" className="w-full h-full flex items-center justify-center">View All Campaigns</Link>
           </Button>
         </div>
       </div>
