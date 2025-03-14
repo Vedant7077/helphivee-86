@@ -1,12 +1,12 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Campaign {
-  id: number;
+  id: number | string;
   title: string;
   description: string;
   raised: number;
@@ -69,105 +69,59 @@ const CampaignCard = ({ campaign }: { campaign: Campaign }) => {
 const Campaigns = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
 
-  const allCampaigns: Campaign[] = [
-    {
-      id: 1,
-      title: "Education for Rural Children",
-      description: "Help provide educational resources to underprivileged children in rural communities.",
-      raised: 3500,
-      goal: 10000,
-      image: "/placeholder.svg",
-      category: "Education",
-      daysLeft: 30,
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Clean Water Initiative",
-      description: "Support our mission to bring clean drinking water to communities in need.",
-      raised: 7500,
-      goal: 15000,
-      image: "/placeholder.svg",
-      category: "Health",
-      daysLeft: 45,
-      featured: true
-    },
-    {
-      id: 3,
-      title: "Medical Aid for Families",
-      description: "Provide essential medical supplies and care to families without access to healthcare.",
-      raised: 2000,
-      goal: 5000,
-      image: "/placeholder.svg",
-      category: "Health",
-      daysLeft: 15
-    },
-    {
-      id: 4,
-      title: "School Building Project",
-      description: "Help us build a new school in a remote village to serve 500 children without access to education.",
-      raised: 12000,
-      goal: 50000,
-      image: "/placeholder.svg",
-      category: "Education",
-      daysLeft: 60
-    },
-    {
-      id: 5,
-      title: "Emergency Food Relief",
-      description: "Provide food assistance to families affected by recent natural disasters in the region.",
-      raised: 8500,
-      goal: 20000,
-      image: "/placeholder.svg",
-      category: "Emergency",
-      daysLeft: 10
-    },
-    {
-      id: 6,
-      title: "Women's Empowerment Program",
-      description: "Support training and microfinance programs for women to start their own businesses and support their families.",
-      raised: 5500,
-      goal: 15000,
-      image: "/placeholder.svg",
-      category: "Community",
-      daysLeft: 25
-    },
-    {
-      id: 7,
-      title: "Digital Literacy for Youth",
-      description: "Equip young people with the digital skills they need to succeed in today's technology-driven world.",
-      raised: 4200,
-      goal: 12000,
-      image: "/placeholder.svg",
-      category: "Education",
-      daysLeft: 35
-    },
-    {
-      id: 8,
-      title: "Community Garden Project",
-      description: "Help establish sustainable community gardens that provide fresh produce and income for local families.",
-      raised: 3800,
-      goal: 8000,
-      image: "/placeholder.svg",
-      category: "Community",
-      daysLeft: 20
-    },
-    {
-      id: 9,
-      title: "Children's Healthcare Program",
-      description: "Provide essential healthcare services and disease prevention programs for children in underserved areas.",
-      raised: 9500,
-      goal: 25000,
-      image: "/placeholder.svg",
-      category: "Health",
-      daysLeft: 40
+  useEffect(() => {
+    async function fetchCampaigns() {
+      setIsLoading(true);
+      
+      try {
+        const { data, error } = await supabase
+          .from('campaigns')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) {
+          console.error('Error fetching campaigns:', error);
+          return;
+        }
+        
+        if (data) {
+          const transformedCampaigns = data.map(campaign => {
+            const deadlineDate = new Date(campaign.deadline);
+            const currentDate = new Date();
+            const timeDiff = deadlineDate.getTime() - currentDate.getTime();
+            const daysLeft = Math.max(0, Math.ceil(timeDiff / (1000 * 3600 * 24)));
+            
+            return {
+              id: campaign.id,
+              title: campaign.title,
+              description: campaign.description,
+              raised: campaign.current_amount,
+              goal: campaign.goal,
+              image: campaign.image_url || '/placeholder.svg',
+              category: campaign.category,
+              daysLeft: daysLeft,
+              featured: false
+            };
+          });
+          
+          if (transformedCampaigns.length > 0) transformedCampaigns[0].featured = true;
+          if (transformedCampaigns.length > 1) transformedCampaigns[1].featured = true;
+          
+          setAllCampaigns(transformedCampaigns);
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  ];
+    
+    fetchCampaigns();
+  }, []);
 
-  const categories = Array.from(new Set(allCampaigns.map(campaign => campaign.category)));
-
-  // Filter campaigns based on search query and selected category
   const filteredCampaigns = allCampaigns.filter(campaign => {
     const matchesSearch = campaign.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           campaign.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -175,11 +129,14 @@ const Campaigns = () => {
     return matchesSearch && matchesCategory;
   });
 
+  const categories = Array.from(new Set(allCampaigns.map(campaign => campaign.category)));
+
+  const featuredCampaigns = allCampaigns.filter(campaign => campaign.featured);
+
   return (
     <Layout>
       <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
               Our Campaigns
@@ -189,7 +146,6 @@ const Campaigns = () => {
             </p>
           </div>
 
-          {/* Search and Filter */}
           <div className="mb-10 bg-white p-6 rounded-lg shadow-sm">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="md:col-span-2 relative">
@@ -228,47 +184,55 @@ const Campaigns = () => {
             </div>
           </div>
 
-          {/* Featured Campaigns */}
-          {(searchQuery === "" && selectedCategory === null) && (
+          {isLoading && (
+            <div className="text-center py-16">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent text-charity-blue align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+              </div>
+              <p className="mt-4 text-lg text-gray-600">Loading campaigns...</p>
+            </div>
+          )}
+
+          {!isLoading && !searchQuery && !selectedCategory && featuredCampaigns.length > 0 && (
             <div className="mb-16">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Campaigns</h2>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
-                {allCampaigns.filter(campaign => campaign.featured).map(campaign => (
+                {featuredCampaigns.map(campaign => (
                   <CampaignCard key={campaign.id} campaign={campaign} />
                 ))}
               </div>
             </div>
           )}
 
-          {/* All Campaigns */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {searchQuery || selectedCategory ? "Search Results" : "All Campaigns"}
-            </h2>
-            
-            {filteredCampaigns.length > 0 ? (
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {filteredCampaigns.map(campaign => (
-                  <CampaignCard key={campaign.id} campaign={campaign} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-10 bg-white rounded-lg shadow-sm">
-                <p className="text-lg text-gray-600">No campaigns found matching your criteria.</p>
-                <Button 
-                  className="mt-4 bg-charity-blue hover:bg-charity-blue-light"
-                  onClick={() => {
-                    setSearchQuery("");
-                    setSelectedCategory(null);
-                  }}
-                >
-                  View All Campaigns
-                </Button>
-              </div>
-            )}
-          </div>
+          {!isLoading && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                {searchQuery || selectedCategory ? "Search Results" : "All Campaigns"}
+              </h2>
+              
+              {filteredCampaigns.length > 0 ? (
+                <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  {filteredCampaigns.map(campaign => (
+                    <CampaignCard key={campaign.id} campaign={campaign} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-10 bg-white rounded-lg shadow-sm">
+                  <p className="text-lg text-gray-600">No campaigns found matching your criteria.</p>
+                  <Button 
+                    className="mt-4 bg-charity-blue hover:bg-charity-blue-light"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSelectedCategory(null);
+                    }}
+                  >
+                    View All Campaigns
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
 
-          {/* Start Your Campaign */}
           <div className="mt-20 bg-charity-coral-light p-10 rounded-lg text-center">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Start Your Own Campaign</h2>
             <p className="text-lg text-gray-800 mb-6 max-w-3xl mx-auto">
