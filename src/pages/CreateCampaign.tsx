@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -12,7 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -73,7 +72,6 @@ const CreateCampaign = () => {
     try {
       let imageUrl = "";
 
-      // Upload image if provided
       if (data.image && data.image.length > 0) {
         const file = data.image[0];
         const fileExt = file.name.split('.').pop();
@@ -88,7 +86,6 @@ const CreateCampaign = () => {
           throw new Error('Error uploading image');
         }
 
-        // Get public URL
         const { data: urlData } = supabase.storage
           .from('campaigns')
           .getPublicUrl(filePath);
@@ -96,7 +93,6 @@ const CreateCampaign = () => {
         imageUrl = urlData.publicUrl;
       }
 
-      // Save campaign data
       const { error } = await supabase.from('campaigns').insert({
         title: data.title,
         description: data.description,
