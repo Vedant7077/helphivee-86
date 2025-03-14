@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -93,18 +94,20 @@ const CreateCampaign = () => {
         imageUrl = urlData.publicUrl;
       }
 
-      const { error } = await supabase.from('campaigns').insert({
-        title: data.title,
-        description: data.description,
-        goal: data.goal,
-        deadline: data.deadline,
-        category: data.category,
-        image_url: imageUrl,
-        user_id: user.id,
-        current_amount: 0,
-        status: 'active',
-        created_at: new Date().toISOString(),
-      });
+      const { error } = await supabase
+        .from('campaigns')
+        .insert({
+          title: data.title,
+          description: data.description,
+          goal: data.goal,
+          deadline: data.deadline,
+          category: data.category,
+          image_url: imageUrl,
+          user_id: user.id,
+          current_amount: 0,
+          status: 'active',
+          created_at: new Date().toISOString(),
+        });
 
       if (error) throw error;
 
