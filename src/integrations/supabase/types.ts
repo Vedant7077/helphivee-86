@@ -54,6 +54,44 @@ export type Database = {
         }
         Relationships: []
       }
+      donations: {
+        Row: {
+          amount: number
+          anonymous: boolean | null
+          campaign_id: string | null
+          created_at: string
+          donor_name: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          anonymous?: boolean | null
+          campaign_id?: string | null
+          created_at?: string
+          donor_name?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          anonymous?: boolean | null
+          campaign_id?: string | null
+          created_at?: string
+          donor_name?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -86,7 +124,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_campaign_amount: {
+        Args: {
+          campaign_id: string
+          amount_to_add: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

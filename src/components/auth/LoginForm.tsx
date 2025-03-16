@@ -18,9 +18,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface LoginFormProps {
   returnTo?: string;
+  onSuccess?: () => void;
 }
 
-const LoginForm = ({ returnTo = "/" }: LoginFormProps) => {
+const LoginForm = ({ returnTo = "/", onSuccess }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -40,7 +41,11 @@ const LoginForm = ({ returnTo = "/" }: LoginFormProps) => {
 
     try {
       await signIn(values.email, values.password);
-      navigate(returnTo);
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate(returnTo);
+      }
     } catch (error: any) {
       setError(error.message || "Failed to sign in. Please try again.");
     } finally {

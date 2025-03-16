@@ -31,14 +31,14 @@ const DonationHistory = () => {
             amount,
             created_at,
             campaign_id,
-            campaigns(title)
+            campaigns:campaigns(title)
           `)
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
           
         if (error) throw error;
         
-        const formattedDonations = data.map((item) => ({
+        const formattedDonations = data.map((item: any) => ({
           id: item.id,
           amount: item.amount,
           campaign_title: item.campaigns?.title || 'Unknown Campaign',

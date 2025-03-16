@@ -23,9 +23,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface SignupFormProps {
   returnTo?: string;
+  onSuccess?: () => void;
 }
 
-const SignupForm = ({ returnTo = "/" }: SignupFormProps) => {
+const SignupForm = ({ returnTo = "/", onSuccess }: SignupFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -47,7 +48,11 @@ const SignupForm = ({ returnTo = "/" }: SignupFormProps) => {
 
     try {
       await signUp(values.email, values.password, values.name);
-      navigate(returnTo);
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        navigate(returnTo);
+      }
     } catch (error: any) {
       setError(error.message || "Failed to sign up. Please try again.");
     } finally {

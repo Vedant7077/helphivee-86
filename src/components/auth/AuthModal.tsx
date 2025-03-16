@@ -6,10 +6,17 @@ import SignupForm from './SignupForm';
 
 interface AuthModalProps {
   defaultTab?: 'login' | 'signup';
+  onClose?: () => void;
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ defaultTab = 'login' }) => {
+const AuthModal: React.FC<AuthModalProps> = ({ defaultTab = 'login', onClose }) => {
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
+
+  const handleSuccess = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden animate-fade-in max-w-md w-full mx-auto">
@@ -29,10 +36,10 @@ const AuthModal: React.FC<AuthModalProps> = ({ defaultTab = 'login' }) => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="login" className="p-6">
-          <LoginForm onSuccess={() => {}} />
+          <LoginForm onSuccess={handleSuccess} />
         </TabsContent>
         <TabsContent value="signup" className="p-6">
-          <SignupForm onSuccess={() => {}} />
+          <SignupForm onSuccess={handleSuccess} />
         </TabsContent>
       </Tabs>
     </div>

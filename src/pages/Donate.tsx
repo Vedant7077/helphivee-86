@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
@@ -82,14 +83,18 @@ const Donate = () => {
     
     try {
       // Insert donation record into Supabase
-      const { error } = await supabase.from('donations').insert({
+      const donationData = {
         user_id: user.id,
         amount: Number(data.amount),
         campaign_id: campaignId || null,
         anonymous: data.anonymous,
         donor_name: data.anonymous ? null : `${data.firstName} ${data.lastName}`,
         created_at: new Date().toISOString(),
-      });
+      };
+      
+      const { error } = await supabase
+        .from('donations')
+        .insert(donationData);
       
       if (error) throw error;
       
