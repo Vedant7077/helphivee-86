@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -25,7 +25,13 @@ const LoginForm = ({ returnTo = "/", onSuccess }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { signIn } = useAuth();
+  
+  // Get the returnTo parameter from the URL if it exists
+  const searchParams = new URLSearchParams(location.search);
+  const urlReturnTo = searchParams.get('returnTo');
+  const finalReturnTo = urlReturnTo || returnTo;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -44,7 +50,7 @@ const LoginForm = ({ returnTo = "/", onSuccess }: LoginFormProps) => {
       if (onSuccess) {
         onSuccess();
       } else {
-        navigate(returnTo);
+        navigate(finalReturnTo);
       }
     } catch (error: any) {
       setError(error.message || "Failed to sign in. Please try again.");

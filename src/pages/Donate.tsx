@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { useForm } from "react-hook-form";
@@ -44,6 +44,25 @@ const Donate = () => {
   const location = useLocation();
   
   const campaignId = new URLSearchParams(location.search).get('campaignId');
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      // Add a message to inform users they need to log in
+      toast({
+        title: "Authentication required",
+        description: "Please log in to make a donation.",
+        variant: "destructive",
+      });
+      
+      // Use a timeout to allow the toast to be displayed before redirecting
+      const redirectTimeout = setTimeout(() => {
+        navigate(`/login?returnTo=${encodeURIComponent(`/donate${campaignId ? `?campaignId=${campaignId}` : ''}`)}`);
+      }, 1500);
+      
+      return () => clearTimeout(redirectTimeout);
+    }
+  }, [user, campaignId, navigate, toast]);
 
   const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationSchema),
@@ -134,6 +153,27 @@ const Donate = () => {
     }
   };
 
+  // Show loading or redirect if not logged in
+  if (!user) {
+    return (
+      <Layout>
+        <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">Make a Donation</h1>
+            <p className="mt-4 text-xl text-gray-600">Redirecting to login page...</p>
+            <div className="mt-8">
+              <Button 
+                onClick={() => navigate(`/login?returnTo=${encodeURIComponent(`/donate${campaignId ? `?campaignId=${campaignId}` : ''}`)}`)}
+                className="bg-charity-green hover:bg-charity-green-dark text-white"
+              >
+                Login to Donate
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
   
   return (
     <Layout>
