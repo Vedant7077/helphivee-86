@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
@@ -11,6 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const donationSchema = z.object({
   amount: z.string().min(1, "Please select or enter an amount"),
@@ -36,6 +38,11 @@ const Donate = () => {
   const [customAmount, setCustomAmount] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const campaignId = new URLSearchParams(location.search).get('campaignId');
 
   const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationSchema),
@@ -43,7 +50,7 @@ const Donate = () => {
       amount: "50",
       firstName: "",
       lastName: "",
-      email: "",
+      email: user?.email || "",
       phone: "",
       address: "",
       city: "",
@@ -59,9 +66,33 @@ const Donate = () => {
   });
 
   const onSubmit = async (data: DonationFormValues) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to make a donation.",
+        variant: "destructive",
+      });
+      
+      // Redirect to login page, with a return URL to come back to the donation page
+      navigate(`/login?returnTo=${encodeURIComponent(`/donate${campaignId ? `?campaignId=${campaignId}` : ''}`)}`);
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
+      // Insert donation record into Supabase
+      const { error } = await supabase.from('donations').insert({
+        user_id: user.id,
+        amount: Number(data.amount),
+        campaign_id: campaignId || null,
+        anonymous: data.anonymous,
+        donor_name: data.anonymous ? null : `${data.firstName} ${data.lastName}`,
+        created_at: new Date().toISOString(),
+      });
+      
+      if (error) throw error;
+      
       // This would be replaced with actual payment processing logic
       console.log("Donation data:", data);
       
@@ -75,10 +106,22 @@ const Donate = () => {
       
       form.reset();
       setCustomAmount(false);
-    } catch (error) {
+      
+      // If donation was for a specific campaign, update the campaign's amount
+      if (campaignId) {
+        const { error: updateError } = await supabase.rpc('increment_campaign_amount', {
+          campaign_id: campaignId,
+          amount_to_add: Number(data.amount)
+        });
+        
+        if (updateError) console.error("Error updating campaign amount:", updateError);
+      }
+      
+    } catch (error: any) {
+      console.error("Donation error:", error);
       toast({
         title: "Something went wrong.",
-        description: "Please try again later or contact support.",
+        description: error.message || "Please try again later or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -86,6 +129,7 @@ const Donate = () => {
     }
   };
 
+  
   return (
     <Layout>
       <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -93,6 +137,15 @@ const Donate = () => {
           <div className="text-center mb-12">
             <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">Make a Donation</h1>
             <p className="mt-4 text-xl text-gray-600">Your contribution helps create brighter futures for children in need</p>
+            
+            {!user && (
+              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                <p className="text-yellow-700">
+                  Please <Button variant="link" className="p-0 text-charity-blue" onClick={() => navigate(`/login?returnTo=${encodeURIComponent(`/donate${campaignId ? `?campaignId=${campaignId}` : ''}`)}`)}
+                  >log in</Button> to make a donation.
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -410,9 +463,9 @@ const Donate = () => {
                 <Button 
                   type="submit" 
                   className="w-full bg-charity-coral hover:bg-charity-coral-light text-white text-lg py-6"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !user}
                 >
-                  {isSubmitting ? "Processing..." : "Complete Donation"}
+                  {isSubmitting ? "Processing..." : !user ? "Login to Donate" : "Complete Donation"}
                 </Button>
 
                 <p className="text-center text-sm text-gray-500 mt-4">

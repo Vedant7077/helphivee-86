@@ -1,65 +1,70 @@
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useAuth } from "@/context/AuthContext";
 
-const signupSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
+const formSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
-type SignupFormValues = z.infer<typeof signupSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 interface SignupFormProps {
-  onSuccess: () => void;
+  returnTo?: string;
 }
 
-const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
+const SignupForm = ({ returnTo = "/" }: SignupFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signUp } = useAuth();
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  
-  const form = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
+  const { signUp } = useAuth();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = async (data: SignupFormValues) => {
+  const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    
+    setError("");
+
     try {
-      await signUp(data.email, data.password, data.name);
-      onSuccess();
-      navigate('/profile');
-    } catch (error) {
-      console.error('Sign up error:', error);
+      await signUp(values.email, values.password, values.name);
+      navigate(returnTo);
+    } catch (error: any) {
+      setError(error.message || "Failed to sign up. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight">Create an account</h2>
-        <p className="text-sm text-muted-foreground">
-          Enter your information below to create your account
-        </p>
-      </div>
-      
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-4">
+          {error && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+              {error}
+            </div>
+          )}
+
           <FormField
             control={form.control}
             name="name"
@@ -67,13 +72,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
               <FormItem>
                 <FormLabel>Full Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} disabled={isLoading} />
+                  <Input 
+                    placeholder="Your full name" 
+                    {...field} 
+                    disabled={isLoading}
+                    autoComplete="name"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="email"
@@ -81,13 +91,18 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="name@example.com" {...field} disabled={isLoading} />
+                  <Input 
+                    placeholder="Your email address" 
+                    {...field} 
+                    disabled={isLoading}
+                    autoComplete="email"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="password"
@@ -95,33 +110,49 @@ const SignupForm: React.FC<SignupFormProps> = ({ onSuccess }) => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
+                  <Input 
+                    type="password" 
+                    placeholder="Create a password" 
+                    {...field} 
+                    disabled={isLoading}
+                    autoComplete="new-password"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <Button type="submit" className="w-full bg-charity-green hover:bg-charity-green-dark" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Sign up'}
-          </Button>
-        </form>
-      </Form>
-      
-      <div className="text-center text-sm">
-        <p className="text-muted-foreground">
-          By clicking sign up, you agree to our{' '}
-          <a href="#" className="underline underline-offset-4 hover:text-primary">
-            Terms of Service
-          </a>{' '}
-          and{' '}
-          <a href="#" className="underline underline-offset-4 hover:text-primary">
-            Privacy Policy
-          </a>
-          .
-        </p>
-      </div>
-    </div>
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm Password</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="password" 
+                    placeholder="Confirm your password" 
+                    {...field} 
+                    disabled={isLoading}
+                    autoComplete="new-password"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <Button 
+          type="submit" 
+          className="w-full bg-charity-green hover:bg-charity-green-dark"
+          disabled={isLoading}
+        >
+          {isLoading ? "Signing up..." : "Sign Up"}
+        </Button>
+      </form>
+    </Form>
   );
 };
 

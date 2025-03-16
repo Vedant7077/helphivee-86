@@ -1,63 +1,63 @@
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useAuth } from "@/context/AuthContext";
 
-const loginSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address.' }),
-  password: z.string().min(1, { message: 'Password is required.' }),
+const formSchema = z.object({
+  email: z.string().email("Please enter a valid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 interface LoginFormProps {
-  onSuccess: () => void;
+  returnTo?: string;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
+const LoginForm = ({ returnTo = "/" }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [error, setError] = useState("");
   const navigate = useNavigate();
-  
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const { signIn } = useAuth();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
-    
+    setError("");
+
     try {
-      await signIn(data.email, data.password);
-      onSuccess();
-      navigate('/profile');
-    } catch (error) {
-      console.error('Login error:', error);
+      await signIn(values.email, values.password);
+      navigate(returnTo);
+    } catch (error: any) {
+      setError(error.message || "Failed to sign in. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight">Welcome back</h2>
-        <p className="text-sm text-muted-foreground">
-          Enter your credentials to sign in to your account
-        </p>
-      </div>
-      
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-4">
+          {error && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
+              {error}
+            </div>
+          )}
+
           <FormField
             control={form.control}
             name="email"
@@ -65,13 +65,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="name@example.com" {...field} disabled={isLoading} />
+                  <Input 
+                    placeholder="Your email address" 
+                    {...field} 
+                    disabled={isLoading}
+                    autoComplete="email"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
+
           <FormField
             control={form.control}
             name="password"
@@ -79,34 +84,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
+                  <Input 
+                    type="password" 
+                    placeholder="Your password" 
+                    {...field} 
+                    disabled={isLoading}
+                    autoComplete="current-password"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          
-          <div className="flex items-center justify-end">
-            <a href="#" className="text-sm text-charity-green hover:underline">
-              Forgot password?
-            </a>
-          </div>
-          
-          <Button type="submit" className="w-full bg-charity-green hover:bg-charity-green-dark" disabled={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign in'}
-          </Button>
-        </form>
-      </Form>
-      
-      <div className="text-center text-sm">
-        <p className="text-muted-foreground">
-          Don't have an account?{' '}
-          <a href="#" className="text-charity-green hover:underline">
-            Sign up
-          </a>
-        </p>
-      </div>
-    </div>
+        </div>
+
+        <Button 
+          type="submit" 
+          className="w-full bg-charity-green hover:bg-charity-green-dark"
+          disabled={isLoading}
+        >
+          {isLoading ? "Signing in..." : "Sign In"}
+        </Button>
+      </form>
+    </Form>
   );
 };
 
