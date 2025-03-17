@@ -1,6 +1,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Layout from "@/components/layout/Layout";
+import { Link } from "react-router-dom";
 
 // CountUp component for animated statistics
 const CountUp = ({ end, label }: { end: number; label: string }) => {
@@ -180,12 +181,12 @@ const About = () => {
               There are many ways to get involved and support our work. Whether through donations, volunteering, or partnerships, your contribution makes a difference.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a href="/donate" className="bg-charity-green text-white py-3 px-6 rounded-md font-medium hover:bg-charity-green-dark transition-colors">
+              <Link to="/donate" className="bg-charity-green text-white py-3 px-6 rounded-md font-medium hover:bg-charity-green-dark transition-colors">
                 Donate Now
-              </a>
-              <a href="/contact" className="bg-white text-charity-green-dark py-3 px-6 rounded-md font-medium hover:bg-gray-100 transition-colors">
+              </Link>
+              <Link to="/contact" className="bg-white text-charity-green-dark py-3 px-6 rounded-md font-medium hover:bg-gray-100 transition-colors">
                 Contact Us
-              </a>
+              </Link>
             </div>
           </div>
         </div>
