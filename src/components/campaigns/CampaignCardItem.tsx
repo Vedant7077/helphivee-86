@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface Campaign {
   id: number | string;
@@ -16,6 +17,19 @@ interface Campaign {
 const CampaignCardItem = ({ campaign }: { campaign: Campaign }) => {
   const progress = Math.min(Math.round((campaign.raised / campaign.goal) * 100), 100);
 
+  // Fallback local images for better reliability
+  const getLocalImage = (index: number) => {
+    const localImages = [
+      "/placeholder.svg",
+      "https://images.unsplash.com/photo-1522661067900-ab829854a57f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1541252260730-0412e8e2108e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1574722772249-e21eeef4f1bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
+    ];
+    return localImages[index % localImages.length];
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
       <div className="h-48 bg-gray-200 relative">
@@ -29,8 +43,14 @@ const CampaignCardItem = ({ campaign }: { campaign: Campaign }) => {
           alt={campaign.title} 
           className="w-full h-full object-cover"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = '/placeholder.svg';
+            const target = e.target as HTMLImageElement;
+            // Generate a consistent ID for the campaign
+            const campaignId = typeof campaign.id === 'string' 
+              ? campaign.id.charCodeAt(0) % 6 
+              : campaign.id % 6;
+            target.src = getLocalImage(campaignId);
           }}
+          data-id={campaign.id}
         />
       </div>
       <div className="p-6">
@@ -55,7 +75,7 @@ const CampaignCardItem = ({ campaign }: { campaign: Campaign }) => {
           <span className="text-gray-500">of ${campaign.goal.toLocaleString()}</span>
         </div>
         <Button className="w-full bg-charity-blue hover:bg-charity-blue-light text-white">
-          Donate
+          <Link to="/donate" className="w-full h-full flex items-center justify-center">Donate</Link>
         </Button>
       </div>
     </div>

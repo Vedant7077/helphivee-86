@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Award } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 // Campaign interface
 interface Campaign {
@@ -26,6 +26,19 @@ interface CampaignCardProps {
 const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
   const progressPercentage = (campaign.raisedAmount / campaign.goalAmount) * 100;
   
+  // Fallback local images for better reliability
+  const getLocalImage = (index: number) => {
+    const localImages = [
+      "/placeholder.svg",
+      "https://images.unsplash.com/photo-1522661067900-ab829854a57f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1541252260730-0412e8e2108e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1574722772249-e21eeef4f1bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
+    ];
+    return localImages[index % localImages.length];
+  };
+  
   return (
     <Link 
       to={`/campaigns/${campaign.id}`} 
@@ -45,6 +58,12 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
             src={campaign.imageUrl} 
             alt={campaign.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              // Generate a consistent ID for the campaign
+              const campaignId = campaign.id.charCodeAt(0) % 5;
+              target.src = getLocalImage(campaignId);
+            }}
           />
         </div>
         
@@ -55,6 +74,9 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
               src={campaign.organizer.avatar} 
               alt={campaign.organizer.name}
               className="w-8 h-8 rounded-full object-cover border-2 border-white"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "https://randomuser.me/api/portraits/women/65.jpg";
+              }}
             />
             <span className="ml-2 text-sm text-gray-600">
               {campaign.organizer.name}
