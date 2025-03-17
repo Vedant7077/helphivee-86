@@ -1,10 +1,16 @@
 
+import { useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import ContactForm from "@/components/contact/ContactForm";
 import ContactInfo from "@/components/contact/ContactInfo";
 import FAQSection from "@/components/contact/FAQSection";
 
 const Contact = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <Layout>
       <div className="bg-white py-12 px-4 sm:px-6 lg:px-8">

@@ -12,17 +12,30 @@ const FeaturedCampaign = ({ title, description, raised, goal, image }: {
 }) => {
   const progress = Math.min(Math.round((raised / goal) * 100), 100);
   
+  // Use local images for better reliability
+  const getLocalImage = (index: number) => {
+    const localImages = [
+      "/placeholder.svg",
+      "https://images.unsplash.com/photo-1522661067900-ab829854a57f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
+    ];
+    return localImages[index % localImages.length];
+  };
+  
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
       <div className="h-48 bg-gray-200 relative">
-        <div className="absolute inset-0 bg-gray-300 animate-pulse-subtle"></div>
         <img 
           src={image} 
           alt={title} 
           className="w-full h-full object-cover"
           onError={(e) => {
-            (e.target as HTMLImageElement).src = '/placeholder.svg';
+            const target = e.target as HTMLImageElement;
+            const campaignId = Number(target.dataset.id || 0);
+            target.src = getLocalImage(campaignId);
           }}
+          data-id={title === "Education for Rural Children" ? 1 : title === "Clean Water Initiative" ? 2 : 3}
         />
       </div>
       <div className="p-6">
@@ -56,7 +69,7 @@ const FeaturedCampaigns = () => {
       description: "Help provide educational resources to underprivileged children in rural communities.",
       raised: 3500,
       goal: 10000,
-      image: "https://images.unsplash.com/photo-1522661067900-ab829854a57f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8ZWR1Y2F0aW9ufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
+      image: "https://images.unsplash.com/photo-1522661067900-ab829854a57f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
     },
     {
       id: 2,
@@ -64,7 +77,7 @@ const FeaturedCampaigns = () => {
       description: "Support our mission to bring clean drinking water to communities in need.",
       raised: 7500,
       goal: 15000,
-      image: "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2xlYW4lMjB3YXRlcnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
+      image: "https://images.unsplash.com/photo-1615937657715-bc7b4b7962c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
     },
     {
       id: 3,
@@ -72,7 +85,7 @@ const FeaturedCampaigns = () => {
       description: "Provide essential medical supplies and care to families without access to healthcare.",
       raised: 2000,
       goal: 5000,
-      image: "https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fG1lZGljYWx8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+      image: "https://images.unsplash.com/photo-1624727828489-a1e03b79bba8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60"
     }
   ];
 
