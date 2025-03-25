@@ -32,27 +32,29 @@ const CampaignCardItem = ({ campaign }: { campaign: Campaign }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
-      <div className="h-48 bg-gray-200 relative">
-        {campaign.featured && (
-          <div className="absolute top-0 right-0 bg-charity-coral text-white px-3 py-1 text-sm font-medium z-10">
-            Featured
-          </div>
-        )}
-        <img 
-          src={campaign.image} 
-          alt={campaign.title} 
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            // Generate a consistent ID for the campaign
-            const campaignId = typeof campaign.id === 'string' 
-              ? campaign.id.charCodeAt(0) % 6 
-              : campaign.id % 6;
-            target.src = getLocalImage(campaignId);
-          }}
-          data-id={campaign.id}
-        />
-      </div>
+      <Link to={`/campaign/${campaign.id}`}>
+        <div className="h-48 bg-gray-200 relative">
+          {campaign.featured && (
+            <div className="absolute top-0 right-0 bg-charity-coral text-white px-3 py-1 text-sm font-medium z-10">
+              Featured
+            </div>
+          )}
+          <img 
+            src={campaign.image} 
+            alt={campaign.title} 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              // Generate a consistent ID for the campaign
+              const campaignId = typeof campaign.id === 'string' 
+                ? campaign.id.charCodeAt(0) % 6 
+                : campaign.id % 6;
+              target.src = getLocalImage(campaignId);
+            }}
+            data-id={campaign.id}
+          />
+        </div>
+      </Link>
       <div className="p-6">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium px-2 py-1 bg-gray-100 rounded-full text-charity-blue">
@@ -60,7 +62,9 @@ const CampaignCardItem = ({ campaign }: { campaign: Campaign }) => {
           </span>
           <span className="text-sm text-gray-500">{campaign.daysLeft} days left</span>
         </div>
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">{campaign.title}</h3>
+        <Link to={`/campaign/${campaign.id}`}>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2 hover:text-charity-blue transition-colors">{campaign.title}</h3>
+        </Link>
         <p className="text-gray-600 mb-4 line-clamp-2">{campaign.description}</p>
         <div className="mb-2">
           <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -74,9 +78,14 @@ const CampaignCardItem = ({ campaign }: { campaign: Campaign }) => {
           <span className="text-charity-blue">${campaign.raised.toLocaleString()} raised</span>
           <span className="text-gray-500">of ${campaign.goal.toLocaleString()}</span>
         </div>
-        <Button className="w-full bg-charity-blue hover:bg-charity-blue-light text-white">
-          <Link to="/donate" className="w-full h-full flex items-center justify-center">Donate</Link>
-        </Button>
+        <div className="flex space-x-2">
+          <Button className="flex-1 bg-charity-blue hover:bg-charity-blue-light text-white">
+            <Link to="/donate" className="w-full h-full flex items-center justify-center">Donate</Link>
+          </Button>
+          <Button variant="outline" className="flex-1">
+            <Link to={`/campaign/${campaign.id}`} className="w-full h-full flex items-center justify-center">View Details</Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

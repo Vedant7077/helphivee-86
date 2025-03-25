@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Campaigns from "./pages/Campaigns";
+import CampaignDetails from "./pages/CampaignDetails";
 import Donate from "./pages/Donate";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
@@ -48,13 +49,14 @@ const App = () => (
     <AuthProvider>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
+        <Sonner position="top-center" className="z-50" />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/campaigns" element={<Campaigns />} />
+            <Route path="/campaign/:id" element={<CampaignDetails />} />
             <Route path="/donate" element={<Donate />} />
             <Route path="/login" element={<Login />} />
             <Route 

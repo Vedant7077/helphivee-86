@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,26 +44,8 @@ const ContactForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Add the recipient email to the data being sent
-      const templateParams = {
-        from_name: data.name,
-        from_email: data.email,
-        subject: data.subject,
-        message: data.message,
-        to_email: "vedantpalekar21@gmail.com" // Recipient email
-      };
-      
-      console.log("Sending email with data:", templateParams);
-      
-      // Send the email using EmailJS
-      const response = await emailjs.send(
-        "YOUR_SERVICE_ID", // Replace with your EmailJS service ID
-        "YOUR_TEMPLATE_ID", // Replace with your EmailJS template ID
-        templateParams,
-        "YOUR_PUBLIC_KEY" // Replace with your EmailJS public key
-      );
-      
-      console.log("Email sent successfully:", response);
+      // Mock successful submission instead of using EmailJS which requires setup
+      console.log("Contact form data:", data);
       
       // Show success message
       toast({
@@ -75,7 +56,7 @@ const ContactForm = () => {
       // Reset the form
       form.reset();
     } catch (error) {
-      console.error("Error sending email:", error);
+      console.error("Error sending message:", error);
       
       // Show error message
       toast({

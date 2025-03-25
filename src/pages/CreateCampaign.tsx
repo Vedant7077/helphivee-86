@@ -25,6 +25,7 @@ const campaignSchema = z.object({
     message: "Deadline must be in the future",
   }),
   category: z.string().min(1, { message: "Please select a category" }),
+  customCategory: z.string().optional(),
   image: z
     .instanceof(FileList)
     .refine((files) => files.length > 0, { message: "Image is required" })
@@ -45,6 +46,7 @@ const CreateCampaign = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
 
   const form = useForm<CampaignFormValues>({
     resolver: zodResolver(campaignSchema),
@@ -54,7 +56,16 @@ const CreateCampaign = () => {
       goal: 1000,
       deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10), // 30 days from now
       category: "education",
+      customCategory: "",
     },
+  });
+
+  // Watch for category changes to show/hide custom category field
+  const watchCategory = form.watch("category");
+  
+  // Update custom category visibility when category changes
+  useState(() => {
+    setShowCustomCategory(watchCategory === "other");
   });
 
   const onSubmit = async (data: CampaignFormValues) => {
@@ -94,6 +105,11 @@ const CreateCampaign = () => {
         imageUrl = urlData.publicUrl;
       }
 
+      // Use the custom category if category is "other"
+      const finalCategory = data.category === "other" && data.customCategory 
+        ? data.customCategory 
+        : data.category;
+
       const { error } = await supabase
         .from('campaigns')
         .insert({
@@ -101,7 +117,7 @@ const CreateCampaign = () => {
           description: data.description,
           goal: data.goal,
           deadline: data.deadline,
-          category: data.category,
+          category: finalCategory,
           image_url: imageUrl,
           user_id: user.id,
           current_amount: 0,
@@ -140,6 +156,13 @@ const CreateCampaign = () => {
     } else {
       setPreviewUrl(null);
     }
+  };
+
+  // Update custom category visibility when category changes
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setShowCustomCategory(value === "other");
+    form.setValue("category", value);
   };
 
   if (!user) {
@@ -249,6 +272,7 @@ const CreateCampaign = () => {
                           <select
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                             {...field}
+                            onChange={handleCategoryChange}
                             disabled={isLoading}
                           >
                             <option value="education">Education</option>
@@ -264,6 +288,26 @@ const CreateCampaign = () => {
                       </FormItem>
                     )}
                   />
+
+                  {showCustomCategory && (
+                    <FormField
+                      control={form.control}
+                      name="customCategory"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custom Category</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="Enter your custom category" 
+                              {...field} 
+                              disabled={isLoading} 
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
 
                   <FormField
                     control={form.control}

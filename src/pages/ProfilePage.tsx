@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import DonationHistory from "@/components/profile/DonationHistory";
+import Dashboard from "@/components/profile/Dashboard";
 
 export default function ProfilePage() {
   const { user, signOut, updateProfile, updatePassword } = useAuth();
@@ -118,12 +119,27 @@ export default function ProfilePage() {
           </div>
           
           <div className="flex-1">
-            <Tabs defaultValue="profile">
+            <Tabs defaultValue="dashboard">
               <TabsList className="mb-6">
+                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
                 <TabsTrigger value="profile">Profile</TabsTrigger>
                 <TabsTrigger value="password">Password</TabsTrigger>
                 <TabsTrigger value="donations">Donation History</TabsTrigger>
               </TabsList>
+              
+              <TabsContent value="dashboard">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Your Dashboard</CardTitle>
+                    <CardDescription>
+                      Overview of your campaigns and donations.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Dashboard />
+                  </CardContent>
+                </Card>
+              </TabsContent>
               
               <TabsContent value="profile">
                 <Card>
