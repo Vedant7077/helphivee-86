@@ -32,7 +32,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notification email to site owner
     const emailToOwner = await resend.emails.send({
       from: "Charity Website <onboarding@resend.dev>",
-      to: ["vedantpalekar21@gmail.com"],
+      to: ["clicksclash45@gmail.com"],
       subject: `New Contact Form: ${subject}`,
       html: `
         <h2>New Contact Form Submission</h2>
