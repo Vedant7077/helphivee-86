@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-charity-green-dark">Brighter Futures</span>
+              <span className="text-2xl font-bold text-charity-green-dark animate-pulse">Soulful Giving</span>
             </Link>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               <Link 
@@ -135,7 +134,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="pt-2 pb-3 space-y-1">

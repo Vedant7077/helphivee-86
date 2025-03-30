@@ -14,6 +14,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import DonationFireworks from "@/components/animations/DonationFireworks";
+import WebsiteLoader from "@/components/animations/WebsiteLoader";
 
 const donationSchema = z.object({
   amount: z.string().min(1, "Please select or enter an amount"),
@@ -38,6 +40,9 @@ type DonationFormValues = z.infer<typeof donationSchema>;
 const Donate = () => {
   const [customAmount, setCustomAmount] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showFireworks, setShowFireworks] = useState(false);
+  const [campaignDetails, setCampaignDetails] = useState<any>(null);
   const { toast } = useToast();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -45,9 +50,34 @@ const Donate = () => {
   
   const campaignId = new URLSearchParams(location.search).get('campaignId');
 
+  // Load campaign details if campaignId is provided
+  useEffect(() => {
+    const fetchCampaignDetails = async () => {
+      if (campaignId) {
+        try {
+          const { data, error } = await supabase
+            .from('campaigns')
+            .select('*')
+            .eq('id', campaignId)
+            .single();
+            
+          if (error) throw error;
+          if (data) setCampaignDetails(data);
+        } catch (error) {
+          console.error("Error fetching campaign details:", error);
+        }
+      }
+      
+      // Simulate loading
+      setTimeout(() => setLoading(false), 1500);
+    };
+    
+    fetchCampaignDetails();
+  }, [campaignId]);
+
   // Redirect to login if not authenticated
   useEffect(() => {
-    if (!user) {
+    if (!user && !loading) {
       // Add a message to inform users they need to log in
       toast({
         title: "Authentication required",
@@ -62,12 +92,12 @@ const Donate = () => {
       
       return () => clearTimeout(redirectTimeout);
     }
-  }, [user, campaignId, navigate, toast]);
+  }, [user, campaignId, navigate, toast, loading]);
 
   const form = useForm<DonationFormValues>({
     resolver: zodResolver(donationSchema),
     defaultValues: {
-      amount: "50",
+      amount: campaignDetails?.goal ? Math.min(50, Math.round(campaignDetails.goal * 0.1)).toString() : "50",
       firstName: "",
       lastName: "",
       email: user?.email || "",
@@ -79,11 +109,21 @@ const Donate = () => {
       cardNumber: "",
       cardExpiry: "",
       cardCvv: "",
-      comments: "",
+      comments: campaignDetails?.title ? `Donation for: ${campaignDetails.title}` : "",
       subscribe: true,
       anonymous: false,
     },
   });
+
+  // Update form defaults when campaign details are loaded
+  useEffect(() => {
+    if (campaignDetails) {
+      form.setValue('comments', `Donation for: ${campaignDetails.title}`);
+      // Set a reasonable default amount (10% of the goal or 50, whichever is less)
+      const defaultAmount = Math.min(50, Math.round(campaignDetails.goal * 0.1)).toString();
+      form.setValue('amount', defaultAmount);
+    }
+  }, [campaignDetails, form]);
 
   const onSubmit = async (data: DonationFormValues) => {
     if (!user) {
@@ -123,14 +163,6 @@ const Donate = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      toast({
-        title: "Thank you for your donation!",
-        description: "Your generosity makes our work possible.",
-      });
-      
-      form.reset();
-      setCustomAmount(false);
-      
       // If donation was for a specific campaign, update the campaign's amount
       if (campaignId) {
         const { error: updateError } = await supabase.rpc('increment_campaign_amount', {
@@ -140,6 +172,20 @@ const Donate = () => {
         
         if (updateError) console.error("Error updating campaign amount:", updateError);
       }
+      
+      // Show fireworks animation
+      setShowFireworks(true);
+      
+      // After animation finishes, reset form and show toast
+      setTimeout(() => {
+        setShowFireworks(false);
+        toast({
+          title: "Thank you for your donation!",
+          description: "Your generosity makes our work possible.",
+        });
+        form.reset();
+        setCustomAmount(false);
+      }, 8000);
       
     } catch (error: any) {
       console.error("Donation error:", error);
@@ -152,6 +198,21 @@ const Donate = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Show loading if page is loading
+  if (loading) {
+    return (
+      <Layout>
+        <WebsiteLoader duration={1500} />
+        <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">Make a Donation</h1>
+            <p className="mt-4 text-xl text-gray-600">Loading donation form...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
 
   // Show loading or redirect if not logged in
   if (!user) {
@@ -177,19 +238,39 @@ const Donate = () => {
   
   return (
     <Layout>
+      {showFireworks && <DonationFireworks />}
+      
       <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl">Make a Donation</h1>
-            <p className="mt-4 text-xl text-gray-600">Your contribution helps create brighter futures for children in need</p>
             
-            {!user && (
-              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                <p className="text-yellow-700">
-                  Please <Button variant="link" className="p-0 text-charity-blue" onClick={() => navigate(`/login?returnTo=${encodeURIComponent(`/donate${campaignId ? `?campaignId=${campaignId}` : ''}`)}`)}
-                  >log in</Button> to make a donation.
+            {campaignDetails ? (
+              <div className="mt-4">
+                <p className="text-xl text-charity-green-dark font-medium">
+                  Donating to: {campaignDetails.title}
                 </p>
+                <p className="mt-2 text-gray-600">
+                  {campaignDetails.description?.substring(0, 150)}
+                  {campaignDetails.description?.length > 150 ? '...' : ''}
+                </p>
+                <div className="mt-4 flex justify-center">
+                  <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-4">
+                    <div className="flex justify-between text-sm font-medium mb-2">
+                      <span className="text-charity-green-dark">${campaignDetails.current_amount?.toLocaleString()} raised</span>
+                      <span className="text-gray-500">of ${campaignDetails.goal?.toLocaleString()}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className="bg-charity-green h-2.5 rounded-full" 
+                        style={{ width: `${Math.min(Math.round((campaignDetails.current_amount / campaignDetails.goal) * 100), 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
               </div>
+            ) : (
+              <p className="mt-4 text-xl text-gray-600">Your contribution helps create brighter futures for children in need</p>
             )}
           </div>
 

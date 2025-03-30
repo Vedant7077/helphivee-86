@@ -1,14 +1,16 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
 import { useAuth } from "@/context/AuthContext";
+import WebsiteLoader from "@/components/animations/WebsiteLoader";
 
 const Login = () => {
   const [activeTab, setActiveTab] = useState("login");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
@@ -16,6 +18,15 @@ const Login = () => {
   // Get the returnTo parameter from the URL
   const searchParams = new URLSearchParams(location.search);
   const returnTo = searchParams.get('returnTo') || '/';
+
+  useEffect(() => {
+    // Simulate loading
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // If user is already logged in, redirect to the returnTo URL or home
   if (user) {
@@ -25,9 +36,11 @@ const Login = () => {
 
   return (
     <Layout>
+      {loading && <WebsiteLoader duration={1500} />}
+      
       <div className="container max-w-md mx-auto py-16">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold">Welcome to Brighter Futures</h1>
+          <h1 className="text-3xl font-bold">Welcome to Soulful Giving</h1>
           <p className="text-gray-600 mt-2">Sign in to your account or create a new one</p>
         </div>
 

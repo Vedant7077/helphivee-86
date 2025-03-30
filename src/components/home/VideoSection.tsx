@@ -14,15 +14,22 @@ const videos = [
     id: 2,
     title: "Clean Water Initiative",
     description: "Our clean water projects are transforming communities across Africa.",
-    url: "https://player.vimeo.com/video/164009822",
+    url: "https://player.vimeo.com/video/193780621",
     thumbnail: "https://images.unsplash.com/photo-1532639539566-313a88e4d1ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
   },
   {
     id: 3,
     title: "Healthcare for Children",
     description: "Providing essential healthcare to children in need around the world.",
-    url: "https://player.vimeo.com/video/164009822",
+    url: "https://player.vimeo.com/video/371844884",
     thumbnail: "https://images.unsplash.com/photo-1542884748-2b87b36c6b90?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+  },
+  {
+    id: 4,
+    title: "Education Transformation",
+    description: "How education is changing lives in underprivileged communities.",
+    url: "https://player.vimeo.com/video/348565511",
+    thumbnail: "https://images.unsplash.com/photo-1520881363902-a0ff4e722963?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
   },
 ];
 

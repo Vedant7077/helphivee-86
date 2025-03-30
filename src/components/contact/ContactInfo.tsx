@@ -17,9 +17,9 @@ const ContactInfo = () => {
           <div>
             <h3 className="text-lg font-medium text-gray-900">Address</h3>
             <p className="text-gray-600 mt-1">
-              123 Charity Street<br />
-              New York, NY 10001<br />
-              United States
+              301 Pillai College of Engineering<br />
+              Panvel, Navimumbai<br />
+              India
             </p>
           </div>
         </div>
@@ -41,7 +41,8 @@ const ContactInfo = () => {
             <h3 className="text-lg font-medium text-gray-900">Email</h3>
             <p className="text-gray-600 mt-1">
               vedantpalekar21@gmail.com<br />
-              support@brighterfutures.org
+              support@brighterfutures.org<br />
+              shivalesahil@gmail.com
             </p>
           </div>
         </div>
