@@ -8,7 +8,7 @@ const MissionSection = () => (
           Building brighter futures together
         </p>
         <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-          We believe that every child deserves a chance at a bright future, regardless of their circumstances.
+          At Prayaas, we believe that every child deserves a chance at a bright future, regardless of their circumstances.
         </p>
       </div>
 

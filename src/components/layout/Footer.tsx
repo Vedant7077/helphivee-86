@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* About */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold">Soulful Giving</h3>
+            <h3 className="text-xl font-bold">Prayaas</h3>
             <p className="text-gray-300">
               We're dedicated to making a difference in the lives of children through education, healthcare, and community development.
             </p>
@@ -41,7 +41,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-400">© 2023 Soulful Giving. All rights reserved.</p>
+          <p className="text-gray-400">© 2023 Prayaas. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link to="#" className="text-gray-400 hover:text-white">
               <span className="sr-only">Facebook</span>

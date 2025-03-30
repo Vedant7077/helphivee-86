@@ -1,8 +1,7 @@
 
 import { useEffect, useState } from "react";
 import Layout from "@/components/layout/Layout";
-import Hero from "@/components/home/Hero";
-import VideoSection from "@/components/home/VideoSection";
+import EnhancedHero from "@/components/home/EnhancedHero";
 import FeaturedCampaigns from "@/components/home/FeaturedCampaigns";
 import CompletedCampaigns from "@/components/home/CompletedCampaigns";
 import MissionSection from "@/components/home/MissionSection";
@@ -14,21 +13,20 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulating loading resources
+    // Shorter loading time
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 3000);
+    }, 1200);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      {loading && <WebsiteLoader onComplete={() => setLoading(false)} />}
+      {loading && <WebsiteLoader onComplete={() => setLoading(false)} duration={1200} />}
       
       <Layout>
-        <Hero />
-        <VideoSection />
+        <EnhancedHero />
         <FeaturedCampaigns />
         <CompletedCampaigns />
         <MissionSection />
