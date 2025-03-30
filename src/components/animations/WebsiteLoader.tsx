@@ -6,7 +6,7 @@ interface WebsiteLoaderProps {
   onComplete?: () => void;
 }
 
-const WebsiteLoader = ({ duration = 1000, onComplete }: WebsiteLoaderProps) => {
+const WebsiteLoader = ({ duration = 500, onComplete }: WebsiteLoaderProps) => {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [charFills, setCharFills] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
@@ -20,7 +20,7 @@ const WebsiteLoader = ({ duration = 1000, onComplete }: WebsiteLoaderProps) => {
       setCharFills(prev => {
         const newFills = [...prev];
         for (let i = 0; i < newFills.length; i++) {
-          newFills[i] = Math.min(100, newFills[i] + 10);
+          newFills[i] = Math.min(100, newFills[i] + 15);
         }
         return newFills;
       });
@@ -60,7 +60,7 @@ const WebsiteLoader = ({ duration = 1000, onComplete }: WebsiteLoaderProps) => {
               style={{ 
                 color: "#4caf50",
                 clipPath: `inset(0 ${100 - charFills[index]}% 0 0)`,
-                transition: "clip-path 0.3s ease"
+                transition: "clip-path 0.2s ease"
               }}
             >
               {char}

@@ -31,7 +31,7 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-charity-green-dark animate-pulse">Soulful Giving</span>
+              <span className="text-2xl font-bold text-charity-green-dark animate-pulse">Prayaas</span>
             </Link>
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               <Link 

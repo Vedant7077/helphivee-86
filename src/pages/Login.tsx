@@ -20,10 +20,10 @@ const Login = () => {
   const returnTo = searchParams.get('returnTo') || '/';
 
   useEffect(() => {
-    // Set loading time to 1 second as requested
+    // Shorter loading time (0.5 seconds)
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    }, 500);
     
     return () => clearTimeout(timer);
   }, []);
@@ -36,7 +36,7 @@ const Login = () => {
 
   return (
     <Layout>
-      {loading && <WebsiteLoader duration={1000} />}
+      {loading && <WebsiteLoader duration={500} />}
       
       <div className="container max-w-md mx-auto py-16">
         <div className="mb-8 text-center">
