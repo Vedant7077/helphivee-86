@@ -6,10 +6,11 @@ interface WebsiteLoaderProps {
   onComplete?: () => void;
 }
 
-const WebsiteLoader = ({ duration = 1200, onComplete }: WebsiteLoaderProps) => {
+const WebsiteLoader = ({ duration = 500, onComplete }: WebsiteLoaderProps) => {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [charColors, setCharColors] = useState<string[]>([]);
+  const [charFills, setCharFills] = useState<number[]>([0, 0, 0, 0, 0, 0, 0]);
 
   // Rainbow colors for the text animation
   const rainbowColors = [
@@ -24,26 +25,23 @@ const WebsiteLoader = ({ duration = 1200, onComplete }: WebsiteLoaderProps) => {
 
   useEffect(() => {
     // Initialize colors for each character in "Prayaas"
-    setCharColors(Array(7).fill("#ffffff"));
+    setCharColors(Array(7).fill("#4caf50")); // All characters start with green
 
-    // Update the colors of each character in sequence
-    let letterIndex = 0;
-    const colorInterval = setInterval(() => {
-      setCharColors(prev => {
-        const newColors = [...prev];
-        newColors[letterIndex] = rainbowColors[letterIndex % rainbowColors.length];
-        return newColors;
+    // Update the fill percentage of each character in sequence
+    const fillInterval = setInterval(() => {
+      setCharFills(prev => {
+        const newFills = [...prev];
+        for (let i = 0; i < newFills.length; i++) {
+          newFills[i] = Math.min(100, newFills[i] + 5);
+        }
+        return newFills;
       });
-      letterIndex = (letterIndex + 1) % 7;
-    }, 120);
-
-    // Progress bar and completion logic
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const newProgress = prev + 4; // Faster progress
+      
+      setProgress(prev => {
+        const newProgress = prev + 5;
         return newProgress >= 100 ? 100 : newProgress;
       });
-    }, duration / 25); // Faster updates for smoother animation
+    }, duration / 25);
 
     const timeout = setTimeout(() => {
       setIsVisible(false);
@@ -51,8 +49,7 @@ const WebsiteLoader = ({ duration = 1200, onComplete }: WebsiteLoaderProps) => {
     }, duration);
 
     return () => {
-      clearInterval(colorInterval);
-      clearInterval(interval);
+      clearInterval(fillInterval);
       clearTimeout(timeout);
     };
   }, [duration, onComplete]);
@@ -68,19 +65,25 @@ const WebsiteLoader = ({ duration = 1200, onComplete }: WebsiteLoaderProps) => {
         {characters.map((char, index) => (
           <span 
             key={index} 
-            className="transition-colors duration-300"
-            style={{ color: charColors[index] }}
+            className="relative"
+            style={{ 
+              color: charFills[index] < 100 ? "#e0e0e0" : charColors[index],
+              transition: "color 0.3s ease"
+            }}
           >
+            <span 
+              className="absolute top-0 left-0 overflow-hidden"
+              style={{ 
+                color: charColors[index],
+                clipPath: `inset(0 0 ${100 - charFills[index]}% 0)`,
+                transition: "clip-path 0.3s ease"
+              }}
+            >
+              {char}
+            </span>
             {char}
           </span>
         ))}
-      </div>
-      
-      <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
-        <div 
-          className="h-full bg-gradient-to-r from-red-500 via-green-500 to-blue-500 transition-all duration-100 ease-out rounded-full"
-          style={{ width: `${progress}%` }}
-        ></div>
       </div>
       
       <div className="mt-4 text-gray-600">Loading amazing experiences...</div>

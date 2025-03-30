@@ -20,10 +20,10 @@ const Login = () => {
   const returnTo = searchParams.get('returnTo') || '/';
 
   useEffect(() => {
-    // Simulate loading
+    // Faster loading time (0.5 seconds)
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 500);
     
     return () => clearTimeout(timer);
   }, []);

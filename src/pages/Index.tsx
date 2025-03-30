@@ -13,17 +13,17 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Shorter loading time
+    // Shorter loading time (0.5 seconds)
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1200);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      {loading && <WebsiteLoader onComplete={() => setLoading(false)} duration={1200} />}
+      {loading && <WebsiteLoader onComplete={() => setLoading(false)} duration={500} />}
       
       <Layout>
         <EnhancedHero />
