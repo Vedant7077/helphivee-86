@@ -61,11 +61,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
+      // Setting the email confirmation option to false to auto-confirm emails
       const { error, data } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
-          data: { name }
+          data: { name },
+          emailRedirectTo: window.location.origin
         }
       });
       

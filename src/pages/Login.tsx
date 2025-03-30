@@ -20,10 +20,10 @@ const Login = () => {
   const returnTo = searchParams.get('returnTo') || '/';
 
   useEffect(() => {
-    // Faster loading time (0.5 seconds)
+    // Set loading time to 1 second as requested
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 500);
+    }, 1000);
     
     return () => clearTimeout(timer);
   }, []);
@@ -36,11 +36,11 @@ const Login = () => {
 
   return (
     <Layout>
-      {loading && <WebsiteLoader duration={1500} />}
+      {loading && <WebsiteLoader duration={1000} />}
       
       <div className="container max-w-md mx-auto py-16">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold">Welcome to Soulful Giving</h1>
+          <h1 className="text-3xl font-bold">Welcome to Prayaas</h1>
           <p className="text-gray-600 mt-2">Sign in to your account or create a new one</p>
         </div>
 
