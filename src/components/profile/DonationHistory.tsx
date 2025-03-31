@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,7 +40,7 @@ const DonationHistory = () => {
         const formattedDonations = data.map((item: any) => ({
           id: item.id,
           amount: item.amount,
-          campaign_title: item.campaigns?.title || 'General Donation',
+          campaign_title: item.campaigns?.title || 'Unknown',
           created_at: item.created_at,
           campaign_id: item.campaign_id
         }));

@@ -7,7 +7,7 @@ interface DonationFireworksProps {
   onComplete?: () => void;
 }
 
-const DonationFireworks = ({ duration = 1500, onComplete }: DonationFireworksProps) => {
+const DonationFireworks = ({ duration = 800, onComplete }: DonationFireworksProps) => {
   const [isActive, setIsActive] = useState(true);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const DonationFireworks = ({ duration = 1500, onComplete }: DonationFireworksPro
       const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
       
       // Use confetti to create fireworks
-      const count = 2; // Reduced count for shorter display
+      const count = 1; // Reduced count for shorter display
       const interval = setInterval(() => {
         for (let i = 0; i < count; i++) {
           // Random position
@@ -28,15 +28,15 @@ const DonationFireworks = ({ duration = 1500, onComplete }: DonationFireworksPro
           
           setTimeout(() => {
             confetti({
-              particleCount: 30, // Reduced particle count
-              spread: 40,
+              particleCount: 20, // Reduced particle count
+              spread: 30,
               origin: { x, y },
               colors: randomColors,
               disableForReducedMotion: true
             });
-          }, i * 80); // Shorter delay between fireworks
+          }, i * 50); // Shorter delay between fireworks
         }
-      }, 300); // Faster interval
+      }, 200); // Faster interval
       
       setTimeout(() => {
         clearInterval(interval);
