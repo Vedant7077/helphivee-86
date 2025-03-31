@@ -26,58 +26,87 @@ const Campaigns = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
 
-  useEffect(() => {
-    async function fetchCampaigns() {
-      setIsLoading(true);
-      
-      try {
-        const { data, error } = await supabase
-          .from('campaigns')
-          .select('*')
-          .order('created_at', { ascending: false });
-          
-        if (error) {
-          console.error('Error fetching campaigns:', error);
-          return;
-        }
-        
-        let campaigns: Campaign[] = [];
-        
-        if (data && data.length > 0) {
-          const transformedCampaigns = data.map(campaign => {
-            const deadlineDate = new Date(campaign.deadline);
-            const currentDate = new Date();
-            const timeDiff = deadlineDate.getTime() - currentDate.getTime();
-            const daysLeft = Math.max(0, Math.ceil(timeDiff / (1000 * 3600 * 24)));
-            
-            // Mark featured campaigns (first 2)
-            const isFeatured = campaigns.length < 2;
-            
-            return {
-              id: campaign.id,
-              title: campaign.title,
-              description: campaign.description,
-              raised: campaign.current_amount,
-              goal: campaign.goal,
-              image: campaign.image_url || '/placeholder.svg',
-              category: campaign.category,
-              daysLeft: daysLeft,
-              featured: isFeatured
-            };
-          });
-          
-          campaigns = transformedCampaigns;
-        }
-        
-        setAllCampaigns(campaigns);
-      } catch (error) {
-        console.error('Unexpected error:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  const fetchCampaigns = async () => {
+    setIsLoading(true);
     
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (error) {
+        console.error('Error fetching campaigns:', error);
+        return;
+      }
+      
+      let campaigns: Campaign[] = [];
+      
+      if (data && data.length > 0) {
+        const transformedCampaigns = data.map((campaign, index) => {
+          const deadlineDate = new Date(campaign.deadline);
+          const currentDate = new Date();
+          const timeDiff = deadlineDate.getTime() - currentDate.getTime();
+          const daysLeft = Math.max(0, Math.ceil(timeDiff / (1000 * 3600 * 24)));
+          
+          // Mark featured campaigns (first 2)
+          const isFeatured = index < 2;
+          
+          return {
+            id: campaign.id,
+            title: campaign.title,
+            description: campaign.description,
+            raised: campaign.current_amount,
+            goal: campaign.goal,
+            image: campaign.image_url || '/placeholder.svg',
+            category: campaign.category,
+            daysLeft: daysLeft,
+            featured: isFeatured
+          };
+        });
+        
+        campaigns = transformedCampaigns;
+      }
+      
+      setAllCampaigns(campaigns);
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchCampaigns();
+    
+    // Subscribe to campaign updates
+    const channel = supabase
+      .channel('public:campaigns')
+      .on('postgres_changes', 
+        { event: 'UPDATE', schema: 'public', table: 'campaigns' }, 
+        (payload) => {
+          console.log('Campaign updated:', payload);
+          fetchCampaigns(); // Refresh the campaigns list
+        }
+      )
+      .subscribe();
+      
+    // Also subscribe to new donations
+    const donationsChannel = supabase
+      .channel('public:donations')
+      .on('postgres_changes', 
+        { event: 'INSERT', schema: 'public', table: 'donations' }, 
+        (payload) => {
+          console.log('New donation:', payload);
+          fetchCampaigns(); // Refresh the campaigns list when a new donation is made
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+      supabase.removeChannel(donationsChannel);
+    };
   }, []);
 
   const filteredCampaigns = allCampaigns.filter(campaign => {

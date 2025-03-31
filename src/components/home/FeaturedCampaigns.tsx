@@ -1,14 +1,17 @@
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 // Featured Campaign component
-const FeaturedCampaign = ({ title, description, raised, goal, image }: { 
+const FeaturedCampaign = ({ title, description, raised, goal, image, id }: { 
   title: string; 
   description: string; 
   raised: number; 
   goal: number; 
   image: string;
+  id: string | number;
 }) => {
   const progress = Math.min(Math.round((raised / goal) * 100), 100);
   
@@ -54,7 +57,7 @@ const FeaturedCampaign = ({ title, description, raised, goal, image }: {
           <span className="text-gray-500">of ${goal.toLocaleString()}</span>
         </div>
         <Button className="w-full mt-4 bg-charity-green hover:bg-charity-green-dark text-white">
-          <Link to="/donate" className="w-full h-full flex items-center justify-center">Donate</Link>
+          <Link to={`/donate?campaignId=${id}`} className="w-full h-full flex items-center justify-center">Donate</Link>
         </Button>
       </div>
     </div>
@@ -62,7 +65,59 @@ const FeaturedCampaign = ({ title, description, raised, goal, image }: {
 };
 
 const FeaturedCampaigns = () => {
-  const campaigns = [
+  const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('campaigns')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(3);
+          
+        if (error) throw error;
+        
+        if (data) {
+          const formattedCampaigns = data.map(campaign => ({
+            id: campaign.id,
+            title: campaign.title,
+            description: campaign.description,
+            raised: campaign.current_amount,
+            goal: campaign.goal,
+            image: campaign.image_url || '/placeholder.svg'
+          }));
+          
+          setCampaigns(formattedCampaigns);
+        }
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchCampaigns();
+    
+    // Subscribe to campaign updates
+    const channel = supabase
+      .channel('featured-campaigns')
+      .on('postgres_changes', 
+        { event: 'UPDATE', schema: 'public', table: 'campaigns' }, 
+        () => {
+          fetchCampaigns(); // Refresh when campaigns are updated
+        }
+      )
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  // Fallback to static data if no campaigns are available
+  const fallbackCampaigns = [
     {
       id: 1,
       title: "Education for Rural Children",
@@ -89,6 +144,8 @@ const FeaturedCampaigns = () => {
     }
   ];
 
+  const displayCampaigns = campaigns.length > 0 ? campaigns : fallbackCampaigns;
+
   return (
     <div className="py-16 bg-charity-offwhite">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,9 +158,10 @@ const FeaturedCampaigns = () => {
           </p>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {campaigns.map(campaign => (
+          {displayCampaigns.map(campaign => (
             <FeaturedCampaign 
               key={campaign.id}
+              id={campaign.id}
               title={campaign.title}
               description={campaign.description}
               raised={campaign.raised}

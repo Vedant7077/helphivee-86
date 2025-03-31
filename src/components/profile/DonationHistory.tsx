@@ -41,7 +41,7 @@ const DonationHistory = () => {
         const formattedDonations = data.map((item: any) => ({
           id: item.id,
           amount: item.amount,
-          campaign_title: item.campaigns?.title || 'Unknown Campaign',
+          campaign_title: item.campaigns?.title || 'General Donation',
           created_at: item.created_at,
           campaign_id: item.campaign_id
         }));
