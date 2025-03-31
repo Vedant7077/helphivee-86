@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
@@ -50,7 +49,6 @@ const Donate = () => {
   
   const campaignId = new URLSearchParams(location.search).get('campaignId');
 
-  // Load campaign details if campaignId is provided
   useEffect(() => {
     const fetchCampaignDetails = async () => {
       if (campaignId) {
@@ -68,24 +66,20 @@ const Donate = () => {
         }
       }
       
-      // Simulate loading
-      setTimeout(() => setLoading(false), 1500);
+      setTimeout(() => setLoading(false), 1000);
     };
     
     fetchCampaignDetails();
   }, [campaignId]);
 
-  // Redirect to login if not authenticated
   useEffect(() => {
     if (!user && !loading) {
-      // Add a message to inform users they need to log in
       toast({
         title: "Authentication required",
         description: "Please log in to make a donation.",
         variant: "destructive",
       });
       
-      // Use a timeout to allow the toast to be displayed before redirecting
       const redirectTimeout = setTimeout(() => {
         navigate(`/login?returnTo=${encodeURIComponent(`/donate${campaignId ? `?campaignId=${campaignId}` : ''}`)}`);
       }, 1500);
@@ -115,11 +109,9 @@ const Donate = () => {
     },
   });
 
-  // Update form defaults when campaign details are loaded
   useEffect(() => {
     if (campaignDetails) {
       form.setValue('comments', `Donation for: ${campaignDetails.title}`);
-      // Set a reasonable default amount (10% of the goal or 50, whichever is less)
       const defaultAmount = Math.min(50, Math.round(campaignDetails.goal * 0.1)).toString();
       form.setValue('amount', defaultAmount);
     }
@@ -133,7 +125,6 @@ const Donate = () => {
         variant: "destructive",
       });
       
-      // Redirect to login page, with a return URL to come back to the donation page
       navigate(`/login?returnTo=${encodeURIComponent(`/donate${campaignId ? `?campaignId=${campaignId}` : ''}`)}`);
       return;
     }
@@ -141,7 +132,6 @@ const Donate = () => {
     setIsSubmitting(true);
     
     try {
-      // Insert donation record into Supabase
       const donationData = {
         user_id: user.id,
         amount: Number(data.amount),
@@ -157,13 +147,10 @@ const Donate = () => {
       
       if (error) throw error;
       
-      // This would be replaced with actual payment processing logic
       console.log("Donation data:", data);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // If donation was for a specific campaign, update the campaign's amount
       if (campaignId) {
         const { error: updateError } = await supabase.rpc('increment_campaign_amount', {
           campaign_id: campaignId,
@@ -173,10 +160,8 @@ const Donate = () => {
         if (updateError) console.error("Error updating campaign amount:", updateError);
       }
       
-      // Show fireworks animation
       setShowFireworks(true);
       
-      // After animation finishes, reset form and show toast
       setTimeout(() => {
         setShowFireworks(false);
         toast({
@@ -185,7 +170,7 @@ const Donate = () => {
         });
         form.reset();
         setCustomAmount(false);
-      }, 8000);
+      }, 3000);
       
     } catch (error: any) {
       console.error("Donation error:", error);
@@ -199,7 +184,6 @@ const Donate = () => {
     }
   };
 
-  // Show loading if page is loading
   if (loading) {
     return (
       <Layout>
@@ -214,7 +198,6 @@ const Donate = () => {
     );
   }
 
-  // Show loading or redirect if not logged in
   if (!user) {
     return (
       <Layout>
@@ -238,7 +221,7 @@ const Donate = () => {
   
   return (
     <Layout>
-      {showFireworks && <DonationFireworks />}
+      {showFireworks && <DonationFireworks duration={3000} />}
       
       <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -277,7 +260,6 @@ const Donate = () => {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="p-8">
-                {/* Donation Amount */}
                 <div className="mb-10">
                   <h2 className="text-2xl font-semibold text-gray-900 mb-6">Donation Amount</h2>
                   
@@ -350,7 +332,6 @@ const Donate = () => {
                   />
                 </div>
 
-                {/* Personal Information */}
                 <div className="mb-10">
                   <h2 className="text-2xl font-semibold text-gray-900 mb-6">Personal Information</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -470,7 +451,6 @@ const Donate = () => {
                   </div>
                 </div>
 
-                {/* Payment Information */}
                 <div className="mb-10">
                   <h2 className="text-2xl font-semibold text-gray-900 mb-6">Payment Information</h2>
                   <div className="space-y-6">
@@ -520,7 +500,6 @@ const Donate = () => {
                   </div>
                 </div>
 
-                {/* Additional Information */}
                 <div className="mb-10">
                   <h2 className="text-2xl font-semibold text-gray-900 mb-6">Additional Information</h2>
                   
@@ -601,7 +580,6 @@ const Donate = () => {
             </Form>
           </div>
 
-          {/* Support Options */}
           <div className="mt-16 grid gap-8 md:grid-cols-3">
             <div className="bg-white p-6 rounded-lg shadow-sm text-center">
               <div className="text-charity-blue text-3xl font-bold mb-2">Monthly Giving</div>

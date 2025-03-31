@@ -31,7 +31,7 @@ const DonationHistory = () => {
             amount,
             created_at,
             campaign_id,
-            campaigns:campaigns(title)
+            campaigns(title)
           `)
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
