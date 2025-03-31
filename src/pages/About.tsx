@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
@@ -104,40 +103,28 @@ const About = () => {
           {/* Our Team */}
           <div className="mb-20">
             <h2 className="text-3xl font-bold text-gray-900 mb-10">Our Leadership Team</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 {
-                  name: "Emma Thompson",
+                  name: "Sahil Shivale",
                   role: "Founder & Executive Director",
-                  bio: "With 20+ years of experience in international development, Emma has built Brighter Futures from the ground up with a focus on sustainable community impact.",
+                  bio: "With 5+ years of experience in international development, Emma has built Brighter Futures from the ground up with a focus on sustainable community impact.",
                   image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
                 },
                 {
-                  name: "Michael Chen",
+                  name: "Vedant Palekar",
                   role: "Chief Operations Officer",
                   bio: "Michael oversees our global operations in 25 countries, bringing efficiency and innovation to our programs with his background in tech and humanitarian work.",
                   image: "https://images.unsplash.com/photo-1600878459108-617a253537e9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
                 },
                 {
-                  name: "Sophia Garcia",
-                  role: "Director of Education Programs",
-                  bio: "A former educator with 15 years in curriculum development, Sophia has designed our education initiatives that have reached over 30,000 children worldwide.",
-                  image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
-                },
-                {
-                  name: "Daniel Okafor",
+                  name: "Atharva Butte",
                   role: "Chief Financial Officer",
                   bio: "Daniel ensures our resources have maximum impact through strategic financial planning and transparent reporting, with expertise from both corporate and nonprofit sectors.",
                   image: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
                 },
                 {
-                  name: "Aisha Patel",
-                  role: "Director of Healthcare Initiatives",
-                  bio: "With a background in public health and medicine, Aisha leads our healthcare programs that have established 50+ clinics in underserved communities.",
-                  image: "https://images.unsplash.com/photo-1614644147798-f8c0fc9da7f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
-                },
-                {
-                  name: "Carlos Martinez",
+                  name: "Ronit Vaskar",
                   role: "Director of Partnerships",
                   bio: "Carlos has cultivated relationships with over 100 corporate and NGO partners, expanding our reach and impact through strategic collaborations and funding.",
                   image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
