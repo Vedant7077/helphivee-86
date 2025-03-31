@@ -107,40 +107,40 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
                 {
-                  name: "Sarah Johnson",
+                  name: "Emma Thompson",
                   role: "Founder & Executive Director",
-                  bio: "With over 15 years of nonprofit experience, Sarah has dedicated her career to improving children's lives globally.",
-                  image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJvZmVzc2lvbmFsJTIwd29tYW58ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                  bio: "With 20+ years of experience in international development, Emma has built Brighter Futures from the ground up with a focus on sustainable community impact.",
+                  image: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
                 },
                 {
-                  name: "David Rodriguez",
-                  role: "Director of Programs",
-                  bio: "David brings 10 years of international development expertise, overseeing our educational and healthcare initiatives.",
-                  image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHByb2Zlc3Npb25hbCUyMG1hbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                  name: "Michael Chen",
+                  role: "Chief Operations Officer",
+                  bio: "Michael oversees our global operations in 25 countries, bringing efficiency and innovation to our programs with his background in tech and humanitarian work.",
+                  image: "https://images.unsplash.com/photo-1600878459108-617a253537e9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
                 },
                 {
-                  name: "Michelle Lee",
+                  name: "Sophia Garcia",
+                  role: "Director of Education Programs",
+                  bio: "A former educator with 15 years in curriculum development, Sophia has designed our education initiatives that have reached over 30,000 children worldwide.",
+                  image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                },
+                {
+                  name: "Daniel Okafor",
                   role: "Chief Financial Officer",
-                  bio: "A finance expert with a passion for nonprofit work, Michelle ensures our resources have maximum impact.",
-                  image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fHByb2Zlc3Npb25hbCUyMHdvbWFufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
+                  bio: "Daniel ensures our resources have maximum impact through strategic financial planning and transparent reporting, with expertise from both corporate and nonprofit sectors.",
+                  image: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
                 },
                 {
-                  name: "James Wilson",
+                  name: "Aisha Patel",
+                  role: "Director of Healthcare Initiatives",
+                  bio: "With a background in public health and medicine, Aisha leads our healthcare programs that have established 50+ clinics in underserved communities.",
+                  image: "https://images.unsplash.com/photo-1614644147798-f8c0fc9da7f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
+                },
+                {
+                  name: "Carlos Martinez",
                   role: "Director of Partnerships",
-                  bio: "James builds strategic relationships with corporate partners and foundations to expand our reach.",
-                  image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fHByb2Zlc3Npb25hbCUyMG1hbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
-                },
-                {
-                  name: "Priya Patel",
-                  role: "Director of Global Operations",
-                  bio: "With experience in 20+ countries, Priya coordinates our international programs and field teams.",
-                  image: "https://images.unsplash.com/photo-1573497620053-ea5300f94f21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fHByb2Zlc3Npb25hbCUyMHdvbWFufGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60"
-                },
-                {
-                  name: "Daniel Kim",
-                  role: "Communications Director",
-                  bio: "Daniel leads our storytelling efforts, bringing the impact of our work to supporters worldwide.",
-                  image: "https://images.unsplash.com/photo-1545167622-3a6ac756afa4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHByb2Zlc3Npb25hbCUyMG1hbnxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                  bio: "Carlos has cultivated relationships with over 100 corporate and NGO partners, expanding our reach and impact through strategic collaborations and funding.",
+                  image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
                 }
               ].map((member, index) => (
                 <div key={index} className="bg-white shadow-md rounded-lg overflow-hidden">
