@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
@@ -30,6 +29,8 @@ const CampaignDetails = () => {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   useEffect(() => {
     const fetchCampaign = async () => {
@@ -65,7 +66,42 @@ const CampaignDetails = () => {
 
     fetchCampaign();
     window.scrollTo(0, 0);
+    
+    if (id) {
+      const channel = supabase
+        .channel('campaign-updates')
+        .on('postgres_changes', 
+          { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'campaigns',
+            filter: `id=eq.${id}`
+          }, 
+          (payload) => {
+            console.log('Campaign updated:', payload);
+            if (payload.new && campaign && payload.new.current_amount !== campaign.current_amount) {
+              setIsAnimating(true);
+              setCampaign(payload.new as Campaign);
+              setTimeout(() => setIsAnimating(false), 2000);
+            } else {
+              setCampaign(payload.new as Campaign);
+            }
+          }
+        )
+        .subscribe();
+        
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
   }, [id]);
+  
+  useEffect(() => {
+    if (campaign) {
+      const calculatedProgress = Math.min(Math.round((campaign.current_amount / campaign.goal) * 100), 100);
+      setProgress(calculatedProgress);
+    }
+  }, [campaign]);
 
   const getDaysLeft = (deadline: string) => {
     const deadlineDate = new Date(deadline);
@@ -75,7 +111,6 @@ const CampaignDetails = () => {
     return daysDiff > 0 ? daysDiff : 0;
   };
 
-  // Fallback local images for better reliability
   const getLocalImage = (index: number | string) => {
     const localImages = [
       "/placeholder.svg",
@@ -139,13 +174,14 @@ const CampaignDetails = () => {
     );
   }
 
-  const progress = Math.min(Math.round((campaign.current_amount / campaign.goal) * 100), 100);
   const daysLeft = getDaysLeft(campaign.deadline);
   const formattedDate = new Date(campaign.deadline).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric"
   });
+  
+  const isCompleted = campaign.status === 'completed' || campaign.current_amount >= campaign.goal || daysLeft === 0;
 
   return (
     <Layout>
@@ -165,8 +201,16 @@ const CampaignDetails = () => {
                   src={campaign.image_url} 
                   alt={campaign.title} 
                   className="w-full h-full object-cover"
-                  onError={handleImageError}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder.svg';
+                  }}
                 />
+                {isCompleted && (
+                  <div className="absolute top-0 right-0 bg-charity-green text-white px-3 py-1 text-sm font-medium">
+                    Completed
+                  </div>
+                )}
               </div>
               
               <div className="mb-4">
@@ -177,7 +221,10 @@ const CampaignDetails = () => {
                   <span className="text-sm text-gray-500">Created on {new Date(campaign.created_at).toLocaleDateString()}</span>
                 </div>
                 
-                <Progress value={progress} className="h-2 mb-2" />
+                <Progress 
+                  value={progress} 
+                  className={`h-2 mb-2 ${isAnimating ? 'transition-all duration-1000 ease-out animate-pulse' : ''}`} 
+                />
                 
                 <div className="flex justify-between text-sm font-medium mb-1">
                   <span className="text-charity-blue">${campaign.current_amount.toLocaleString()} raised</span>
@@ -215,7 +262,9 @@ const CampaignDetails = () => {
                     <Users className="h-5 w-5 text-charity-blue mr-3" />
                     <div>
                       <p className="text-sm text-gray-500">Status</p>
-                      <p className="font-medium capitalize">{campaign.status}</p>
+                      <p className={`font-medium capitalize ${isCompleted ? 'text-charity-green' : ''}`}>
+                        {isCompleted ? 'Completed' : campaign.status}
+                      </p>
                     </div>
                   </div>
                   
@@ -228,11 +277,21 @@ const CampaignDetails = () => {
                   </div>
                 </div>
                 
-                <Link to="/donate" className="w-full block">
-                  <Button className="w-full bg-charity-blue hover:bg-charity-blue-light">
-                    Donate Now
+                <Link to={`/donate?campaignId=${campaign.id}`} className="w-full block">
+                  <Button 
+                    className={`w-full ${isCompleted 
+                      ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed' 
+                      : 'bg-charity-blue hover:bg-charity-blue-light'}`}
+                    disabled={isCompleted}
+                  >
+                    {isCompleted ? 'Campaign Completed' : 'Donate Now'}
                   </Button>
                 </Link>
+                {isCompleted && (
+                  <p className="text-sm text-gray-500 mt-2 text-center">
+                    This campaign has completed its goal. Thank you for your support!
+                  </p>
+                )}
               </div>
             </Card>
           </div>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,17 +31,20 @@ const DonationHistory = () => {
             amount,
             created_at,
             campaign_id,
-            campaigns(title)
+            campaigns (
+              title
+            )
           `)
           .eq('user_id', user.id)
           .order('created_at', { ascending: false });
           
         if (error) throw error;
         
+        // Properly map the data to ensure campaign title is correctly extracted
         const formattedDonations = data.map((item: any) => ({
           id: item.id,
           amount: item.amount,
-          campaign_title: item.campaigns?.title || 'Unknown',
+          campaign_title: item.campaigns ? item.campaigns.title : 'General Donation',
           created_at: item.created_at,
           campaign_id: item.campaign_id
         }));
@@ -54,6 +58,21 @@ const DonationHistory = () => {
     }
     
     fetchDonations();
+
+    // Subscribe to changes in donations table
+    const channel = supabase
+      .channel('public:donations')
+      .on('postgres_changes', 
+        { event: 'INSERT', schema: 'public', table: 'donations' }, 
+        () => {
+          fetchDonations(); // Refresh donations when new ones are added
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user]);
 
   if (loading) {

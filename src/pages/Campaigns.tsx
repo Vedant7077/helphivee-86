@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Layout from "@/components/layout/Layout";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,7 +108,7 @@ const Campaigns = () => {
       const { error } = await supabase
         .from('campaigns')
         .update({ status: status })
-        .eq('id', campaignId);
+        .eq('id', campaignId.toString());
         
       if (error) {
         console.error('Error updating campaign status:', error);
