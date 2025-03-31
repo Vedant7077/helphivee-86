@@ -12,7 +12,7 @@ export type Database = {
       campaigns: {
         Row: {
           category: string
-          created_at: string | null
+          created_at: string
           current_amount: number
           deadline: string
           description: string
@@ -21,11 +21,12 @@ export type Database = {
           image_url: string | null
           status: string
           title: string
+          updated_at: string
           user_id: string
         }
         Insert: {
           category: string
-          created_at?: string | null
+          created_at?: string
           current_amount?: number
           deadline: string
           description: string
@@ -34,11 +35,12 @@ export type Database = {
           image_url?: string | null
           status?: string
           title: string
+          updated_at?: string
           user_id: string
         }
         Update: {
           category?: string
-          created_at?: string | null
+          created_at?: string
           current_amount?: number
           deadline?: string
           description?: string
@@ -47,6 +49,7 @@ export type Database = {
           image_url?: string | null
           status?: string
           title?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -56,7 +59,7 @@ export type Database = {
           amount: number
           anonymous: boolean | null
           campaign_id: string | null
-          created_at: string | null
+          created_at: string
           donor_name: string | null
           id: string
           user_id: string
@@ -65,7 +68,7 @@ export type Database = {
           amount: number
           anonymous?: boolean | null
           campaign_id?: string | null
-          created_at?: string | null
+          created_at?: string
           donor_name?: string | null
           id?: string
           user_id: string
@@ -74,7 +77,7 @@ export type Database = {
           amount?: number
           anonymous?: boolean | null
           campaign_id?: string | null
-          created_at?: string | null
+          created_at?: string
           donor_name?: string | null
           id?: string
           user_id?: string
