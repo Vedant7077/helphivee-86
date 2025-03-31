@@ -24,10 +24,29 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    console.log("Received contact form request");
     const formData: ContactFormData = await req.json();
     const { name, email, subject, message } = formData;
 
-    console.log("Received contact form submission:", { name, email, subject });
+    // Validate form data
+    if (!name || !email || !subject || !message) {
+      console.error("Missing required form fields:", { name, email, subject });
+      return new Response(
+        JSON.stringify({ 
+          success: false,
+          error: "All fields are required" 
+        }),
+        {
+          status: 400,
+          headers: { 
+            "Content-Type": "application/json",
+            ...corsHeaders 
+          },
+        }
+      );
+    }
+
+    console.log("Processing contact form submission for:", { name, email, subject });
 
     // Send notification email to site owner
     const emailToOwner = await resend.emails.send({
