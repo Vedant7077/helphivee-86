@@ -24,13 +24,6 @@
 
 ---
 
-## 📸 Screenshots
-
-![Screenshot](https://via.placeholder.com/800x400.png?text=Insert+Your+Screenshot+Here)
-
-> _You can replace the above placeholder with real screenshots from your project._
-
----
 
 ## 🛠️ Installation (for local development)
 
